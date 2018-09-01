@@ -6,6 +6,8 @@ import com.vol.chatbot.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Set;
+
 @Component
 public class MessageService {
 
@@ -23,5 +25,10 @@ public class MessageService {
     public Long getCountByUser(User user){
         return messageDao.countByUser(user);
     }
+
+    public Set<Message> getMessagesByUser(User user){
+        return messageDao.getByUser(user);
+    }
+
 
 }

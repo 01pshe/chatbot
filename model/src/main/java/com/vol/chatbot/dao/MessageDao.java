@@ -10,4 +10,6 @@ public interface MessageDao extends JpaRepository<Message,Long> {
     Set<Message> findAllByUserSignature(String signature);
 
     Long countByUser(User user);
+
+    Set<Message> getByUser(User user);
 }

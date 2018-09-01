@@ -11,11 +11,14 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.util.Date;
+import java.util.Set;
 
 @Component
 public class Bot extends TelegramLongPollingBot {
 
     private static final String WELCOME_MESSAGE = "Hello %s! Nice to see you here!";
+    private static final String USERS = "/USERS";
+    private static final String MESSAGES = "/MESSAGES ";
 
     private UserService userService;
     private MessageService messageService;
@@ -51,6 +54,27 @@ public class Bot extends TelegramLongPollingBot {
         return user;
     }
 
+    private String checkCommand(String inputMessage){
+        StringBuilder output = new StringBuilder();
+        if (inputMessage.toUpperCase().equals(USERS)){
+            Set<User> users = userService.users();
+            output.append("List of all users:\n");
+            for (User user: users){
+                output.append(String.format("User id:%s , UserName:%s\n", user.getSysId(), user.getUserFirstName()));
+            }
+        }
+        if (inputMessage.toUpperCase().startsWith(MESSAGES)){
+            String userId = inputMessage.substring(MESSAGES.length());
+            User user = userService.getById(Long.valueOf(userId));
+            Set<Message> messages = messageService.getMessagesByUser(user);
+            output.append(String.format("User %s messages:\n", user.getUserFirstName()));
+            for (Message message: messages){
+                output.append(String.format("-- %s\n", message.getMessage()));
+            }
+        }
+        return output.toString();
+    }
+
     @Override
     public void onUpdateReceived(Update update) {
         System.out.println(String.format("Get message <%s>\nfrom %s",
@@ -63,6 +87,7 @@ public class Bot extends TelegramLongPollingBot {
         } else {
             answer = "";
         }
+        answer = answer + checkCommand(update.getMessage().getText());
         addMessage(user, update.getMessage());
         answer = answer + String.format("\n Really? What do you mean \"%s\" ?",update.getMessage().getText());
         System.out.println(String.format("Sending answer <%s>",answer));
