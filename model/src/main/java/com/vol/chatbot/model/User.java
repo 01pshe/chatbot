@@ -2,6 +2,7 @@ package com.vol.chatbot.model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -32,7 +33,7 @@ public class User {
     private Date datecreate;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Message> messages;
+    private Set<Message> messages = new HashSet<>();
 
     public User() {
     }

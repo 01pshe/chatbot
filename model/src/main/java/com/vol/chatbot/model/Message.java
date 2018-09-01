@@ -1,7 +1,6 @@
 package com.vol.chatbot.model;
 
 import javax.persistence.*;
-import java.util.Date;
 
 @Entity
 @Table(name = "bot_messages")
@@ -17,7 +16,7 @@ public class Message {
     private User user;
 
     @Column(name="date", nullable=false)
-    private Date date;
+    private Integer date;
 
     @Column(name="message", nullable=false)
     private String message;
@@ -42,11 +41,11 @@ public class Message {
         this.user = user;
     }
 
-    public Date getDate() {
+    public Integer getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Integer date) {
         this.date = date;
     }
 
