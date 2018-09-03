@@ -8,7 +8,7 @@ import java.util.Set;
 public interface UserDao extends JpaRepository<User, Long> {
     User findBySignature(String signature);
 
-    Set<User> getAllBySysIdNotNull();
+    Set<User> getAllByIdNotNull();
 
-    User findBySysId(Long id);
+    User getById(Long id);
 }

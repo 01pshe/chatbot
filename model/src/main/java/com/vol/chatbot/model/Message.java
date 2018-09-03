@@ -9,10 +9,10 @@ public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id", unique=true, nullable=false)
-    private Long sysId;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name="date", nullable=false)
@@ -24,13 +24,12 @@ public class Message {
     public Message() {
     }
 
-
-    public Long getSysId() {
-        return sysId;
+    public Long getId() {
+        return id;
     }
 
-    public void setSysId(Long sysId) {
-        this.sysId = sysId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public User getUser() {
@@ -60,7 +59,7 @@ public class Message {
     @Override
     public String toString() {
         return "Message{" +
-                "sysId=" + sysId +
+                "id=" + id +
                 ", user=" + user +
                 ", date=" + date +
                 ", message='" + message + '\'' +

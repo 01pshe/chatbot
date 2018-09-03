@@ -60,7 +60,7 @@ public class Bot extends TelegramLongPollingBot {
             Set<User> users = userService.users();
             output.append("List of all users:\n");
             for (User user: users){
-                output.append(String.format("User id:%s , UserName:%s\n", user.getSysId(), user.getUserFirstName()));
+                output.append(String.format("User id:%s , UserName:%s\n", user.getId(), user.getUserFirstName()));
             }
         }
         if (inputMessage.toUpperCase().startsWith(MESSAGES)){
@@ -87,9 +87,12 @@ public class Bot extends TelegramLongPollingBot {
         } else {
             answer = "";
         }
-        answer = answer + checkCommand(update.getMessage().getText());
         addMessage(user, update.getMessage());
-        answer = answer + String.format("\n Really? What do you mean \"%s\" ?",update.getMessage().getText());
+        System.out.println(user.getScenario());
+        answer = answer + checkCommand(update.getMessage().getText());
+        if (answer.isEmpty()){
+            answer = answer + String.format("\n Really? What do you mean \"%s\" ?",update.getMessage().getText());
+        }
         System.out.println(String.format("Sending answer <%s>",answer));
         SendMessage sendMessage = new SendMessage().setChatId(update.getMessage().getChatId());
         sendMessage.setText(answer);

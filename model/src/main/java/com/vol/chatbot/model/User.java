@@ -1,9 +1,8 @@
 package com.vol.chatbot.model;
 
+
 import javax.persistence.*;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "bot_users")
@@ -12,7 +11,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id", unique=true, nullable=false)
-    private Long sysId;
+    private Long id;
 
     @Column (name = "signature", unique = true, nullable = false)
     private String signature;
@@ -32,18 +31,23 @@ public class User {
     @Column(name = "datecreate")
     private Date datecreate;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Message> messages = new HashSet<>();
+    @PrimaryKeyJoinColumn
+    @OneToOne(cascade = CascadeType.ALL,optional = false,fetch = FetchType.EAGER)
+    private UserInfo userInfo;
+
+    @PrimaryKeyJoinColumn
+    @OneToOne(cascade = CascadeType.ALL,optional = false,fetch = FetchType.EAGER)
+    private Scenario scenario;
 
     public User() {
     }
 
-    public Long getSysId() {
-        return sysId;
+    public Long getId() {
+        return id;
     }
 
-    public void setSysId(Long sysId) {
-        this.sysId = sysId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getSignature() {
@@ -86,14 +90,6 @@ public class User {
         this.bot = bot;
     }
 
-    public Set<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(Set<Message> messages) {
-        this.messages = messages;
-    }
-
     public Date getDatecreate() {
         return datecreate;
     }
@@ -102,15 +98,34 @@ public class User {
         this.datecreate = datecreate;
     }
 
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserInfo userInfo) {
+        this.userInfo = userInfo;
+    }
+
+    public Scenario getScenario() {
+        return scenario;
+    }
+
+    public void setScenario(Scenario scenario) {
+        this.scenario = scenario;
+    }
+
     @Override
     public String toString() {
         return "User{" +
-                "sysId=" + sysId +
+                "id=" + id +
                 ", signature='" + signature + '\'' +
                 ", userFirstName='" + userFirstName + '\'' +
                 ", userLastName='" + userLastName + '\'' +
                 ", userName='" + userName + '\'' +
                 ", bot=" + bot +
+                ", datecreate=" + datecreate +
+                ", userInfo=" + userInfo +
+                ", scenario=" + scenario +
                 '}';
     }
 }

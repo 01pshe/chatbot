@@ -28,10 +28,10 @@ public class UserService {
     }
 
     public User getById(Long id){
-        return userDao.findBySysId(id);
+        return userDao.getById(id);
     }
 
     public Set<User> users(){
-        return userDao.getAllBySysIdNotNull();
+        return userDao.getAllByIdNotNull();
     }
 }
