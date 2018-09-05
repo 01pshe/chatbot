@@ -1,8 +1,10 @@
 package com.vol.chatbot.bot;
 
+import com.vol.chatbot.StepExecutorFactory;
 import com.vol.chatbot.model.Message;
 import com.vol.chatbot.model.User;
 import com.vol.chatbot.services.MessageService;
+import com.vol.chatbot.services.ScenarioService;
 import com.vol.chatbot.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,11 +24,13 @@ public class Bot extends TelegramLongPollingBot {
 
     private UserService userService;
     private MessageService messageService;
+    private ScenarioService scenarioService;
 
     @Autowired
-    public Bot(UserService userService, MessageService messageService) {
+    public Bot(UserService userService, MessageService messageService, ScenarioService scenarioService) {
         this.userService = userService;
         this.messageService = messageService;
+        this.scenarioService = scenarioService;
     }
 
     private User getUser(String signature, org.telegram.telegrambots.meta.api.objects.User telegramUser){
@@ -45,14 +49,7 @@ public class Bot extends TelegramLongPollingBot {
         return user;
     }
 
-    private User addMessage(User user, org.telegram.telegrambots.meta.api.objects.Message newMessage){
-        Message message = new Message();
-        message.setMessage(newMessage.getText());
-        message.setUser(user);
-        message.setDate(newMessage.getDate());
-        messageService.save(message);
-        return user;
-    }
+
 
     private String checkCommand(String inputMessage){
         StringBuilder output = new StringBuilder();
@@ -69,7 +66,7 @@ public class Bot extends TelegramLongPollingBot {
             Set<Message> messages = messageService.getMessagesByUser(user);
             output.append(String.format("User %s messages:\n", user.getUserFirstName()));
             for (Message message: messages){
-                output.append(String.format("-- %s\n", message.getMessage()));
+                output.append(String.format("%s\n", message.getMessage()));
             }
         }
         return output.toString();
@@ -82,25 +79,25 @@ public class Bot extends TelegramLongPollingBot {
                 update.getMessage().getFrom().getFirstName() ));
         User user = getUser(update.getMessage().getFrom().getId().toString(),update.getMessage().getFrom());
         String answer;
-        if (messageService.getCountByUser(user)<=0){
-            answer = String.format(WELCOME_MESSAGE,update.getMessage().getFrom().getFirstName());
-        } else {
-            answer = "";
-        }
-        addMessage(user, update.getMessage());
-        System.out.println(user.getScenario());
-        answer = answer + checkCommand(update.getMessage().getText());
+        Message message  = messageService.addInboundMessage(user, update.getMessage());
+        answer = checkCommand(update.getMessage().getText());
         if (answer.isEmpty()){
-            answer = answer + String.format("\n Really? What do you mean \"%s\" ?",update.getMessage().getText());
+            answer = StepExecutorFactory
+                    .getFactory()
+                    .getStep(scenarioService.getCurrentStep(user.getScenario()))
+                    .run(user,message);
         }
         System.out.println(String.format("Sending answer <%s>",answer));
         SendMessage sendMessage = new SendMessage().setChatId(update.getMessage().getChatId());
         sendMessage.setText(answer);
+
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+
+        messageService.addOutboundMessage(user, answer);
     }
 
     @Override

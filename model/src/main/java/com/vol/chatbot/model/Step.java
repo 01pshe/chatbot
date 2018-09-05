@@ -20,6 +20,12 @@ public class Step {
     @Column(name = "description")
     private String description;
 
+    @Column(name="executor_class")
+    private String executorClass;
+
+    @Column(name = "need_answer")
+    private Boolean needAnswer;
+
     public Step() {
     }
 
@@ -55,6 +61,22 @@ public class Step {
         this.description = description;
     }
 
+    public String getExecutorClass() {
+        return executorClass;
+    }
+
+    public void setExecutorClass(String executorClass) {
+        this.executorClass = executorClass;
+    }
+
+    public Boolean getNeedAnswer() {
+        return needAnswer;
+    }
+
+    public void setNeedAnswer(Boolean needAnswer) {
+        this.needAnswer = needAnswer;
+    }
+
     @Override
     public String toString() {
         return "Step{" +
@@ -62,6 +84,7 @@ public class Step {
                 ", step=" + step +
                 ", substep=" + substep +
                 ", description='" + description + '\'' +
+                ", executorClass='" + executorClass + '\'' +
                 '}';
     }
 }

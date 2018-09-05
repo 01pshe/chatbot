@@ -18,7 +18,6 @@ public class BotStarter implements CommandLineRunner {
 
     public static void main(String[] args) {
 
-
         //Comment this before make deploy on remote  --- Start ----
         System.getProperties().put( "proxySet", "true" );
         System.getProperties().put( "socksProxyHost", "127.0.0.1" );

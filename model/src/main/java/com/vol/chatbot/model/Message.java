@@ -15,11 +15,15 @@ public class Message {
     @JoinColumn(name = "user_id")
     private User user;
 
+    //new Date(TimeUnit.MILLISECONDS.convert(1536070445L,TimeUnit.SECONDS))
     @Column(name="date", nullable=false)
-    private Integer date;
+    private Long date;
 
     @Column(name="message", nullable=false)
     private String message;
+
+    @Column(name="inbound")
+    private Boolean inbound;
 
     public Message() {
     }
@@ -40,11 +44,11 @@ public class Message {
         this.user = user;
     }
 
-    public Integer getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(Integer date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 
@@ -54,6 +58,14 @@ public class Message {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Boolean getInbound() {
+        return inbound;
+    }
+
+    public void setInbound(Boolean inbound) {
+        this.inbound = inbound;
     }
 
     @Override

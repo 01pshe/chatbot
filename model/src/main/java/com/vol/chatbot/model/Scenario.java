@@ -1,6 +1,7 @@
 package com.vol.chatbot.model;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -16,9 +17,10 @@ public class Scenario {
     private Integer currentStepNumber;
 
     @OneToMany(mappedBy = "scenario", fetch = FetchType.EAGER)
-    private Set<ScenarioStep> scenarioSteps;
+    @OrderBy(value = "stepNumber")
+    private List<ScenarioStep> scenarioSteps;
 
-    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private User user;
 
@@ -41,11 +43,11 @@ public class Scenario {
         this.currentStepNumber = currentStepNumber;
     }
 
-    public Set<ScenarioStep> getScenarioSteps() {
+    public List<ScenarioStep> getScenarioSteps() {
         return scenarioSteps;
     }
 
-    public void setScenarioSteps(Set<ScenarioStep> scenarioSteps) {
+    public void setScenarioSteps(List<ScenarioStep> scenarioSteps) {
         this.scenarioSteps = scenarioSteps;
     }
 
