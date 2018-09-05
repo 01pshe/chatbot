@@ -5,6 +5,8 @@ import com.vol.chatbot.dao.ScenarioStepDao;
 import com.vol.chatbot.model.Scenario;
 import com.vol.chatbot.model.ScenarioStep;
 import com.vol.chatbot.model.Step;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +16,8 @@ import java.util.stream.IntStream;
 
 @Component
 public class ScenarioService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScenarioService.class);
 
     private ScenarioDao scenarioDao;
     private ScenarioStepDao scenarioStepDao;
@@ -25,11 +29,17 @@ public class ScenarioService {
     }
 
     public void save(Scenario scenario){
+        LOGGER.trace("Saving Scenario id= {}.",scenario.getId());
         scenarioDao.save(scenario);
+        LOGGER.trace("Scenario saved.");
     }
 
     public ScenarioStep getCurrentStep(Scenario scenario){
-        return scenarioStepDao.getByScenarioAndAndStepNumber(scenario,scenario.getCurrentStepNumber());
+        LOGGER.trace("getByScenarioAndAndStepNumber scenario.id= {}, currentStep={}",scenario.getId(),scenario.getCurrentStepNumber());
+        ScenarioStep scenarioStep = scenarioStepDao.getByScenarioAndAndStepNumber(scenario,scenario.getCurrentStepNumber());
+        LOGGER.trace("got current step");
+        return scenarioStep;
+
     }
 
 
@@ -42,6 +52,7 @@ public class ScenarioService {
     }
 
     public ScenarioStep getNextStep(Scenario scenario){
+        LOGGER.trace("getNextStep by scenario id={}",scenario.getId());
         List<ScenarioStep> steps = scenario.getScenarioSteps();
         steps.sort(Comparator.comparing(ScenarioStep::getStepNumber));
 
@@ -51,11 +62,14 @@ public class ScenarioService {
             Integer nextStepIdx = currentStepIdx+1;
 
             if (steps.size()>nextStepIdx){
+                LOGGER.trace("gotNextStep");
                 return steps.get(nextStepIdx);
             } else{
+                LOGGER.trace("gotNextStep");
                 return currentStep;
             }
         } else{
+            LOGGER.trace("gotNextStep");
             return currentStep;
         }
 
