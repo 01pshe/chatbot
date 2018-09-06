@@ -18,11 +18,7 @@ public class BotStarter implements CommandLineRunner {
 
     public static void main(String[] args) {
 
-        //Comment this before make deploy on remote  --- Start ----
-        System.getProperties().put( "proxySet", "true" );
-        System.getProperties().put( "socksProxyHost", "127.0.0.1" );
-        System.getProperties().put( "socksProxyPort", "9150" );
-        //Comment this before make deploy on remote  --- End ----
+
 
         ApiContextInitializer.init();
         SpringApplication.run(BotStarter.class, args);
@@ -31,6 +27,11 @@ public class BotStarter implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         TelegramBotsApi botsApi = new TelegramBotsApi();
+        //Comment this before make deploy on remote  --- Start ----
+        System.getProperties().put( "proxySet", "true" );
+        System.getProperties().put( "socksProxyHost", "127.0.0.1" );
+        System.getProperties().put( "socksProxyPort", "9150" );
+        //Comment this before make deploy on remote  --- End ----
         botsApi.registerBot(bot);
     }
 }

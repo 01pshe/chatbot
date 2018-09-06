@@ -8,11 +8,7 @@
         </layout>
     </appender>
 
-    <logger name="com.vol.chatbot" level="trace">
-        <appender-ref ref="STDOUT" />
-    </logger>
-
-    <logger name="org.springframework" level="info">
+    <logger name="com.vol.chatbot" level="trace" additivity="false">
         <appender-ref ref="STDOUT" />
     </logger>
 
