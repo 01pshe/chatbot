@@ -35,7 +35,7 @@ public class ScenarioService {
     }
 
     public ScenarioStep getCurrentStep(Scenario scenario){
-        LOGGER.trace("getByScenarioAndAndStepNumber scenario.id= {}, currentStep={}",scenario.getId(),scenario.getCurrentStepNumber());
+//        LOGGER.trace("getByScenarioAndAndStepNumber scenario.id= {}, currentStep={}",scenario.getId(),scenario.getCurrentStepNumber());
         ScenarioStep scenarioStep = scenarioStepDao.getByScenarioAndAndStepNumber(scenario,scenario.getCurrentStepNumber());
         LOGGER.trace("got current step");
         return scenarioStep;

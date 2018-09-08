@@ -2,7 +2,9 @@ package com.vol.chatbot.bot;
 
 import com.vol.chatbot.StepExecutorFactory;
 import com.vol.chatbot.model.Message;
+import com.vol.chatbot.model.Scenario;
 import com.vol.chatbot.model.User;
+import com.vol.chatbot.model.UserInfo;
 import com.vol.chatbot.services.MessageService;
 import com.vol.chatbot.services.ScenarioService;
 import com.vol.chatbot.services.UserService;
@@ -45,6 +47,11 @@ public class Bot extends TelegramLongPollingBot {
         user.setUserLastName(telegramUser.getLastName());
         user.setUserName(telegramUser.getUserName());
         user.setDatecreate(new Date());
+        Scenario scenario = new Scenario();
+        scenario.setCurrentStepNumber(0);
+        UserInfo userInfo = new UserInfo();
+        user.setScenario(scenario);
+        user.setUserInfo(userInfo);
         userService.save(user);
         return user;
     }
@@ -89,6 +96,7 @@ public class Bot extends TelegramLongPollingBot {
         }
         System.out.println(String.format("Sending answer <%s>",answer));
         SendMessage sendMessage = new SendMessage().setChatId(update.getMessage().getChatId());
+        sendMessage.enableHtml(true);
         sendMessage.setText(answer);
 
         try {
@@ -107,6 +115,6 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "put your token here";
+        return "Put you token id here";
     }
 }
