@@ -13,16 +13,15 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 @ImportResource("classpath:spring-context.xml")
 public class BotStarter implements CommandLineRunner {
 
+  private final Bot bot;
+
   @Autowired
-  private Bot bot;
+  public BotStarter(Bot bot) {
+    this.bot = bot;
+  }
 
   public static void main(String[] args) {
 
-    //Comment this before make deploy on remote  --- Start ----
-    System.getProperties().put("proxySet", "true");
-    System.getProperties().put("socksProxyHost", "127.0.0.1");
-    System.getProperties().put("socksProxyPort", "9150");
-    //Comment this before make deploy on remote  --- End ----
 
     ApiContextInitializer.init();
     SpringApplication.run(BotStarter.class, args);
@@ -31,6 +30,11 @@ public class BotStarter implements CommandLineRunner {
   @Override
   public void run(String... args) throws Exception {
     TelegramBotsApi botsApi = new TelegramBotsApi();
+    //Comment this before make deploy on remote  --- Start ----
+    System.getProperties().put( "proxySet", "true" );
+    System.getProperties().put( "socksProxyHost", "127.0.0.1" );
+    System.getProperties().put( "socksProxyPort", "9150" );
+    //Comment this before make deploy on remote  --- End ----
     botsApi.registerBot(bot);
   }
 }

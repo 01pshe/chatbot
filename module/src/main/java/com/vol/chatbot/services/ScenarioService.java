@@ -4,7 +4,6 @@ import com.vol.chatbot.dao.ScenarioDao;
 import com.vol.chatbot.dao.ScenarioStepDao;
 import com.vol.chatbot.model.Scenario;
 import com.vol.chatbot.model.ScenarioStep;
-import com.vol.chatbot.model.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

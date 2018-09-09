@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class Task1 extends AbstractStepExecutor {
 
-  private static final String FIRST_TASK = "Это <strong>первая задача</strong>, который необходимо решить!";
+  private static final String FIRST_TASK = "Это <strong>первая задача</strong>, которую необходимо решить!";
 
   private ScenarioService scenarioService;
 
