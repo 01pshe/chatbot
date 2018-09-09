@@ -21,8 +21,6 @@ public class BotStarter implements CommandLineRunner {
   }
 
   public static void main(String[] args) {
-
-
     ApiContextInitializer.init();
     SpringApplication.run(BotStarter.class, args);
   }
