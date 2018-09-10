@@ -6,64 +6,64 @@ import javax.persistence.*;
 @Table(name = "bot_scenariostep")
 public class ScenarioStep {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  @Column(name = "id", unique = true, nullable = false)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", unique = true, nullable = false)
+    private Long id;
 
-  @Column(name = "step_number", nullable = false)
-  private Integer stepNumber;
+    @Column(name = "step_number", nullable = false)
+    private Integer stepOrder;
 
-  @ManyToOne
-  @JoinColumn(name = "step_id")
-  private Step step;
+    @ManyToOne
+    @JoinColumn(name = "step_id")
+    private Step step;
 
-  @ManyToOne
-  @JoinColumn(name = "scenario_id")
-  private Scenario scenario;
+    @ManyToOne
+    @JoinColumn(name = "scenario_id")
+    private Scenario scenario;
 
-  public ScenarioStep() {
-    // Do nothing
-  }
+    public ScenarioStep() {
+        // Do nothing
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public Long getId() {
+        return id;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-  public Integer getStepNumber() {
-    return stepNumber;
-  }
+    public Integer getStepOrder() {
+        return stepOrder;
+    }
 
-  public void setStepNumber(Integer stepNumber) {
-    this.stepNumber = stepNumber;
-  }
+    public void setStepOrder(Integer stepOrder) {
+        this.stepOrder = stepOrder;
+    }
 
-  public Step getStep() {
-    return step;
-  }
+    public Step getStep() {
+        return step;
+    }
 
-  public void setStep(Step step) {
-    this.step = step;
-  }
+    public void setStep(Step step) {
+        this.step = step;
+    }
 
-  public Scenario getScenario() {
-    return scenario;
-  }
+    public Scenario getScenario() {
+        return scenario;
+    }
 
-  public void setScenario(Scenario scenario) {
-    this.scenario = scenario;
-  }
+    public void setScenario(Scenario scenario) {
+        this.scenario = scenario;
+    }
 
-  @Override
-  public String toString() {
-    return "ScenarioStep{" +
+    @Override
+    public String toString() {
+        return "ScenarioStep{" +
             "id=" + id +
-            ", stepNumber=" + stepNumber +
+            ", stepOrder=" + stepOrder +
             ", step=" + step +
             '}';
-  }
+    }
 }
