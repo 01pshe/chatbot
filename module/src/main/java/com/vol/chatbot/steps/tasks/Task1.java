@@ -1,31 +1,32 @@
-package com.vol.chatbot.steps;
+package com.vol.chatbot.steps.tasks;
 
 import com.vol.chatbot.model.Message;
 import com.vol.chatbot.model.User;
 import com.vol.chatbot.services.ScenarioService;
+import com.vol.chatbot.steps.AbstractStepExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AskUserInfo extends AbstractStepExecutor {
+public class Task1 extends AbstractStepExecutor {
 
-  private static final String OUTPUT_STRING = "Приветствую тебя в нашем тесте!\n Давай знакомиться\n";
+  private static final String FIRST_TASK = "Это <strong>первая задача</strong>, которую необходимо решить!";
 
   private ScenarioService scenarioService;
 
   @Autowired
-  public AskUserInfo(ScenarioService scenarioService) {
+  public Task1(ScenarioService scenarioService) {
     this.scenarioService = scenarioService;
   }
 
   @Override
   protected String runStep(User user, Message message) {
-    return OUTPUT_STRING;
+    return FIRST_TASK;
   }
 
   @Override
   public String getWelcomeString() {
-    return "";
+    return "<strong>Task1</strong>";
   }
 
   @Override

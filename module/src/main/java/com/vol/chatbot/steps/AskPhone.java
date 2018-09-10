@@ -11,33 +11,33 @@ import org.springframework.stereotype.Service;
 @Service
 public class AskPhone extends AbstractStepExecutor {
 
-    private final String WELCOME_STRING = "Укажите Ваш контактный номер телефона";
+  private static final String WELCOME_STRING = "Укажите Ваш контактный номер телефона";
 
-    private UserInfoService userInfoService;
-    private ScenarioService scenarioService;
+  private UserInfoService userInfoService;
+  private ScenarioService scenarioService;
 
-    @Autowired
-    public AskPhone(UserInfoService userInfoService, ScenarioService scenarioService) {
-        this.userInfoService = userInfoService;
-        this.scenarioService = scenarioService;
-    }
+  @Autowired
+  public AskPhone(UserInfoService userInfoService, ScenarioService scenarioService) {
+    this.userInfoService = userInfoService;
+    this.scenarioService = scenarioService;
+  }
 
-    @Override
-    public String runStep(User user, Message message) {
-        //заполним имя пользователя
-        UserInfo userInfo = user.getUserInfo();
-        userInfo.setPhoneNumber(message.getMessage());
-        userInfoService.save(userInfo);
-        return "";
-    }
+  @Override
+  public String runStep(User user, Message message) {
+    //заполним имя пользователя
+    UserInfo userInfo = user.getUserInfo();
+    userInfo.setPhoneNumber(message.getMessage());
+    userInfoService.save(userInfo);
+    return "";
+  }
 
-    @Override
-    public String getWelcomeString() {
-        return WELCOME_STRING;
-    }
+  @Override
+  public String getWelcomeString() {
+    return WELCOME_STRING;
+  }
 
-    @Override
-    protected ScenarioService getScenarioService() {
-        return scenarioService;
-    }
+  @Override
+  protected ScenarioService getScenarioService() {
+    return scenarioService;
+  }
 }

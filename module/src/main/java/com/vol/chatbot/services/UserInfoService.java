@@ -10,18 +10,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserInfoService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserInfoService.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(UserInfoService.class);
 
-    private UserInfoDao userInfoDao;
+  private UserInfoDao userInfoDao;
 
-    @Autowired
-    public UserInfoService(UserInfoDao userInfoDao) {
-        this.userInfoDao = userInfoDao;
-    }
+  @Autowired
+  public UserInfoService(UserInfoDao userInfoDao) {
+    this.userInfoDao = userInfoDao;
+  }
 
-    public void save(UserInfo userInfo){
-        LOGGER.trace("Saving UserInfo id= {}.",userInfo.getId());
-        userInfoDao.save(userInfo);
-        LOGGER.trace("UserInfo saved.");
-    }
+  public void save(UserInfo userInfo) {
+    LOGGER.trace("Saving UserInfo id= {}.", userInfo.getId());
+    userInfoDao.save(userInfo);
+    LOGGER.trace("UserInfo saved.");
+  }
 }

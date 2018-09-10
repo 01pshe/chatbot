@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Set;
 
 public interface UserDao extends JpaRepository<User, Long> {
-    User findBySignature(String signature);
+  User findBySignature(String signature);
 
-    Set<User> getAllByIdNotNull();
+  Set<User> getAllByIdNotNull();
 
-    User getById(Long id);
+  User getById(Long id);
 }
