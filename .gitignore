@@ -6,3 +6,4 @@
 /.idea/dataSources/
 /**/*.iml
 /.idea/dataSources.local.xml
+/.idea/sonarlint/
