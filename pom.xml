@@ -9,6 +9,7 @@
     <modules>
         <module>model</module>
         <module>module</module>
+        <module>rest</module>
     </modules>
     <packaging>pom</packaging>
 

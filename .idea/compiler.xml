@@ -8,12 +8,14 @@
         <outputRelativeToContentRoot value="true" />
         <module name="model" />
         <module name="module" />
+        <module name="rest" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="1.8">
       <module name="chatbot" target="1.8" />
       <module name="model" target="1.8" />
       <module name="module" target="1.8" />
+      <module name="rest" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

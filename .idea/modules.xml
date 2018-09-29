@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/chatbot.iml" filepath="$PROJECT_DIR$/chatbot.iml" />
       <module fileurl="file://$PROJECT_DIR$/model/model.iml" filepath="$PROJECT_DIR$/model/model.iml" />
       <module fileurl="file://$PROJECT_DIR$/module/module.iml" filepath="$PROJECT_DIR$/module/module.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rest/rest.iml" filepath="$PROJECT_DIR$/rest/rest.iml" />
     </modules>
   </component>
 </project>
