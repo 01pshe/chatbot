@@ -70,8 +70,8 @@ public class UserService {
         user.setUserName(telegramUser.getUserName());
         user.setDatecreate(new Date());
         Scenario scenario = new Scenario();
+        scenario.setUser(user);
         scenario.setCurrentStepNumber(0);
-        scenario = scenarioDao.save(scenario);
         UserInfo userInfo = new UserInfo();
         userInfo.setId(scenario.getId());
         user.setScenario(scenario);

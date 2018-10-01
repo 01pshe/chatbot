@@ -33,7 +33,7 @@ public class UserInfo {
     private String email;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name="user_id")
     private User user;
 
     public UserInfo() {

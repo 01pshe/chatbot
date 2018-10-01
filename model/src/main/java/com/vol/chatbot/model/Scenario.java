@@ -9,7 +9,7 @@ public class Scenario {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "current_step")
@@ -20,7 +20,7 @@ public class Scenario {
     private List<ScenarioStep> scenarioSteps;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
+    @JoinColumn(name="user_id")
     private User user;
 
     public Scenario() {

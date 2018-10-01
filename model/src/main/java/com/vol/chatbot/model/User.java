@@ -31,12 +31,10 @@ public class User {
     @Column(name = "datecreate")
     private Date datecreate;
 
-    @PrimaryKeyJoinColumn
-    @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     private UserInfo userInfo;
 
-    @PrimaryKeyJoinColumn
-    @OneToOne(cascade = CascadeType.ALL, optional = false, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     private Scenario scenario;
 
     public User() {
@@ -129,4 +127,6 @@ public class User {
             ", scenario=" + scenario +
             '}';
     }
+
+
 }
