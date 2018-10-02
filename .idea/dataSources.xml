@@ -7,5 +7,11 @@
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://notes.cfcijwxje5wr.us-west-2.rds.amazonaws.com:5432/notes</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="notes@172.17.0.2" uuid="ead31238-87aa-4f96-aa74-167495b71cf2">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://172.17.0.2:5432/notes</jdbc-url>
+    </data-source>
   </component>
 </project>

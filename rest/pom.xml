@@ -8,9 +8,22 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
+    <packaging>war</packaging>
 
     <artifactId>rest</artifactId>
     <dependencies>
+
+        <dependency>
+            <groupId>com.vol.chatbot</groupId>
+            <artifactId>model</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.4</version>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

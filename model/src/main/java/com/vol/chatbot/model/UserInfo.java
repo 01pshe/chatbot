@@ -2,10 +2,14 @@ package com.vol.chatbot.model;
 
 import javax.persistence.*;
 
+@NamedQueries({
+        @NamedQuery(name = UserInfo.ALL_SORTED, query = "SELECT u FROM UserInfo u ORDER BY u.name"),
+})
 @Entity
 @Table(name = "bot_userinfo")
 public class UserInfo {
 
+  public static final String ALL_SORTED = "UserInfo.getAllSorted";
   @Id
   @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.AUTO)
