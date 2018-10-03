@@ -5,7 +5,7 @@ import com.vol.chatbot.model.User;
 
 public interface StepExecutor {
 
-  String run(User user, Message message);
+    String run(User user, Message message);
 
-  String getWelcomeString();
+    String getWelcomeString();
 }

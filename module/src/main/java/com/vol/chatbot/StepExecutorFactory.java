@@ -9,37 +9,36 @@ import java.util.TreeMap;
 
 public class StepExecutorFactory {
 
-  private static volatile StepExecutorFactory factory;
+    private static volatile StepExecutorFactory factory;
 
-  private final Map<String, Class<? extends StepExecutor>> classes = new TreeMap<>();
-  private final Map<String, StepExecutor> objects = new TreeMap<>();
+    private final Map<String, StepExecutor> objects = new TreeMap<>();
 
-  public static StepExecutorFactory getFactory() {
-    StepExecutorFactory localInstance = factory;
-    if (localInstance == null) {
-      synchronized (StepExecutorFactory.class) {
-        localInstance = factory;
+    public static StepExecutorFactory getFactory() {
+        StepExecutorFactory localInstance = factory;
         if (localInstance == null) {
-          factory = localInstance = new StepExecutorFactory();
+            synchronized (StepExecutorFactory.class) {
+                localInstance = factory;
+                if (localInstance == null) {
+                    factory = localInstance = new StepExecutorFactory();
+                }
+            }
         }
-      }
+        return localInstance;
     }
-    return localInstance;
-  }
 
 
-  public StepExecutor getStep(ScenarioStep step) {
-    String executorClass = step.getStep().getExecutorClass();
-    StepExecutor executor = objects.get(executorClass);
-    if (executor == null) {
-      synchronized (objects) {
-        executor = objects.get(executorClass);
+    public StepExecutor getStep(ScenarioStep step) {
+        String executorClass = step.getStep().getExecutorClass();
+        StepExecutor executor = objects.get(executorClass);
         if (executor == null) {
-          executor = (StepExecutor) ApplicationContextProvider.getContext().getBean(executorClass);
-          objects.put(executorClass, executor);
+            synchronized (objects) {
+                executor = objects.get(executorClass);
+                if (executor == null) {
+                    executor = (StepExecutor) ApplicationContextProvider.getContext().getBean(executorClass);
+                    objects.put(executorClass, executor);
+                }
+            }
         }
-      }
+        return executor;
     }
-    return executor;
-  }
 }
