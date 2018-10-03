@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ScenarioStepDao extends JpaRepository<ScenarioStep, Long> {
 
-    ScenarioStep getByScenarioAndAndStepNumber(Scenario scenario, Integer stepNumber);
+    ScenarioStep getByScenarioAndStepOrder(Scenario scenario, Integer stepNumber);
 }
