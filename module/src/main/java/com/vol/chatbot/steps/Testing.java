@@ -9,27 +9,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class Testing extends AbstractStepExecutor {
 
-  private static final String OUTPUT_STRING = "Итак, давай начнем тестирование!\n";
+    private static final String OUTPUT_STRING = "Итак, давай начнем тестирование!\n";
 
-  private ScenarioService scenarioService;
+    private ScenarioService scenarioService;
 
-  @Autowired
-  public Testing(ScenarioService scenarioService) {
-    this.scenarioService = scenarioService;
-  }
+    @Autowired
+    public Testing(ScenarioService scenarioService) {
+        this.scenarioService = scenarioService;
+    }
 
-  @Override
-  protected String runStep(User user, Message message) {
-    return OUTPUT_STRING;
-  }
+    @Override
+    protected String runStep(User user, Message message) {
+        return OUTPUT_STRING;
+    }
 
-  @Override
-  public String getWelcomeString() {
-    return "";
-  }
+    @Override
+    public String getWelcomeString() {
+        return "";
+    }
 
-  @Override
-  protected ScenarioService getScenarioService() {
-    return scenarioService;
-  }
+    @Override
+    protected ScenarioService getScenarioService() {
+        return scenarioService;
+    }
 }

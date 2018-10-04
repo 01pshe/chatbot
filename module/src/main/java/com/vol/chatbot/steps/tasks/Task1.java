@@ -10,27 +10,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class Task1 extends AbstractStepExecutor {
 
-  private static final String FIRST_TASK = "Это <strong>первая задача</strong>, которую необходимо решить!";
+    private static final String FIRST_TASK = "Это <strong>первая задача</strong>, которую необходимо решить!";
 
-  private ScenarioService scenarioService;
+    private ScenarioService scenarioService;
 
-  @Autowired
-  public Task1(ScenarioService scenarioService) {
-    this.scenarioService = scenarioService;
-  }
+    @Autowired
+    public Task1(ScenarioService scenarioService) {
+        this.scenarioService = scenarioService;
+    }
 
-  @Override
-  protected String runStep(User user, Message message) {
-    return FIRST_TASK;
-  }
+    @Override
+    protected String runStep(User user, Message message) {
+        return FIRST_TASK;
+    }
 
-  @Override
-  public String getWelcomeString() {
-    return "<strong>Task1</strong>";
-  }
+    @Override
+    public String getWelcomeString() {
+        return "<strong>Task1</strong>";
+    }
 
-  @Override
-  protected ScenarioService getScenarioService() {
-    return scenarioService;
-  }
+    @Override
+    protected ScenarioService getScenarioService() {
+        return scenarioService;
+    }
 }
