@@ -7,6 +7,7 @@ public interface QueueService {
 
     /**
      * Поместить сообщение в очередь для отправки
+     *
      * @param message - сообщение для отправки
      * @return - true в случае успеха, false - если поместить неудалось
      */
@@ -14,12 +15,14 @@ public interface QueueService {
 
     /**
      * Возвращает количество сообщений в очереди
+     *
      * @return - количество сообщений в очереди
      */
     int size();
 
     /**
      * Устанавливает метод обработки сообщений в очереди
+     *
      * @param sendMessageMethod - метод обработки сообщений(лямда)
      */
     void setMessageSender(SendMessageMethod sendMessageMethod);
@@ -27,6 +30,7 @@ public interface QueueService {
 
     /**
      * Устанавливает количество обработок в секунду
+     *
      * @param tps - количество сообщений в секунду
      */
     void setTps(double tps);

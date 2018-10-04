@@ -39,7 +39,7 @@ public class MessageSenderThread implements Runnable {
     private void sendSingleMessage() {
         Optional message = Optional.ofNullable(this.queue.poll());
         if (message.isPresent()) {
-            LOGGER.debug("sending message:{}",((SendMessage) message.get()).getText());
+            LOGGER.debug("sending message:{}", ((SendMessage) message.get()).getText());
             sendMessageMethod.sendMessage((SendMessage) message.get());
         }
     }

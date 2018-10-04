@@ -19,10 +19,10 @@ public class ConcurentQueueService implements QueueService {
 
     @Autowired
     public ConcurentQueueService() {
-        this.messageSender =new MessageSenderThread(queue,suspended, shutDown);
+        this.messageSender = new MessageSenderThread(queue, suspended, shutDown);
     }
 
-    public void setMessageSender(SendMessageMethod sendMessageMethod){
+    public void setMessageSender(SendMessageMethod sendMessageMethod) {
         this.messageSender.setSendMessageMethod(sendMessageMethod);
     }
 
@@ -47,7 +47,7 @@ public class ConcurentQueueService implements QueueService {
     }
 
     @Override
-    public void setTps(double tps){
+    public void setTps(double tps) {
         this.messageSender.setTps(tps);
     }
 
@@ -55,7 +55,7 @@ public class ConcurentQueueService implements QueueService {
     public void start() {
         shutDown.set(false);
         suspended.set(false);
-        if (this.messageSender.getSendMessageMethod()==null){
+        if (this.messageSender.getSendMessageMethod() == null) {
             throw new IllegalStateException("Для обработчика очереди не указан метод отправки сообщений. используйте метод setMessageSender.");
         }
         Thread thread = new Thread(this.messageSender);

@@ -13,29 +13,29 @@ public class QueueTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QueueTest.class);
 
-    private void write(BotApiMethod method){
-        if (method instanceof SendMessage){
+    private void write(BotApiMethod method) {
+        if (method instanceof SendMessage) {
             String text = ((SendMessage) method).getText();
-            LOGGER.info("message: {}",text);
+            LOGGER.info("message: {}", text);
         }
 
     }
 
     @Test
-    public void test() throws Exception{
+    public void test() throws Exception {
 
 
         QueueService queueService = new ConcurentQueueService();
-        queueService.setMessageSender(message -> write(message));
+        queueService.setMessageSender(this::write);
         LOGGER.info("Queue created.");
         LOGGER.info("Set TPS to 1.");
         queueService.setTps(1.0);
-        for (int i=1; i<=15;i++) {
+        for (int i = 1; i <= 15; i++) {
             SendMessage message = new SendMessage();
             message.setText(String.valueOf(i));
             queueService.add(message);
         }
-        assertTrue(15==queueService.size());
+        assertTrue(15 == queueService.size());
         LOGGER.info("15 messages added to queue.");
         queueService.start();
         LOGGER.info("QueueWorkers started waiting 5 seconds.");
@@ -51,7 +51,7 @@ public class QueueTest {
         Thread.sleep(5000);
         queueService.setTps(10.0);
         LOGGER.info("Set TPS to 10.");
-        for (int i=16; i<=30;i++) {
+        for (int i = 16; i <= 30; i++) {
             SendMessage message = new SendMessage();
             message.setText(String.valueOf(i));
             queueService.add(message);
@@ -60,6 +60,6 @@ public class QueueTest {
         LOGGER.info("Start.");
         queueService.start();
         Thread.sleep(2100);
-        assertTrue(0==queueService.size());
+        assertTrue(0 == queueService.size());
     }
 }

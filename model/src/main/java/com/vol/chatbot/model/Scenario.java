@@ -20,7 +20,7 @@ public class Scenario {
     private List<ScenarioStep> scenarioSteps;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     public Scenario() {
