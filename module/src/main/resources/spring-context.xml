@@ -7,10 +7,20 @@
                             http://www.springframework.org/schema/context
                             http://www.springframework.org/schema/context/spring-context.xsd">
 
+    <context:property-placeholder location="classpath:database.properties,
+                                            classpath:private.properties"/>
+
     <import resource="appconfig-data.xml"/>
+
+    <bean name="queueService" class="com.vol.chatbot.queue.ConcurentQueueService">
+        <property name="tps" value="${queues.outgoing.tps}"/>
+    </bean>
+
+    <bean name="bot" class="com.vol.chatbot.bot.Bot">
+        <property name="botToken" value="${bot.token}"/>
+    </bean>
 
     <context:component-scan base-package="com.vol.chatbot"/>
 
-    <context:property-placeholder location="classpath:database.properties"/>
 
 </beans>

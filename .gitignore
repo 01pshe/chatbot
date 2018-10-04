@@ -1,9 +1,4 @@
 /**/target
-/.idea/libraries/
-/.idea/workspace.xml
-/.idea/usage.statistics.xml
-/.idea/tasks.xml
-/.idea/dataSources/
 /**/*.iml
-/.idea/dataSources.local.xml
-/.idea/sonarlint/
+/module/src/main/resources/private.properties
+/.idea/
