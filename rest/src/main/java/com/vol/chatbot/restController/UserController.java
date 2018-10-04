@@ -1,21 +1,14 @@
 package com.vol.chatbot.restController;
 
-import com.vol.chatbot.model.UserInfo;
 import com.vol.chatbot.restService.RestUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.util.List;
-
-@RestController
-@RequestMapping("users")
+@Controller
 public class UserController {
-
-//  private List<Map<String, String>> userSevice = new ArrayList<Map<String, String>>(){{
-//    add(new HashMap<String, String>(){{put("id", "1"); put("FirstName","Ivanov");}});
-//  }};
 
   private RestUserService restUserService;
 
@@ -24,12 +17,18 @@ public class UserController {
     this.restUserService = restUserService;
   }
 
+  @RequestMapping(value = "/", method = RequestMethod.GET)
+  public String index(Model model) {
+    String message = "Hello ChatBot";
 
-  @GetMapping
+    model.addAttribute("message", message);
+    return "message";
+  }
 
-  public List<UserInfo> listAll() {
-    List<UserInfo> all = restUserService.getAll();
-    return all;
+  @RequestMapping(value = "/users", method = RequestMethod.GET)
+  public String listAll(Model model) {
+    model.addAttribute("users", restUserService.getAll());
+    return "users";
   }
 
 }

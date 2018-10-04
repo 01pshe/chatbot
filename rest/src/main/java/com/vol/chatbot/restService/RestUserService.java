@@ -1,6 +1,5 @@
 package com.vol.chatbot.restService;
 
-import com.vol.chatbot.dao.UserInfoDao;
 import com.vol.chatbot.model.UserInfo;
 import com.vol.chatbot.userRepository.UserInfoRepository;
 import org.slf4j.Logger;

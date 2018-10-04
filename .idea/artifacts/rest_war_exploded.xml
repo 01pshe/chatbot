@@ -12,6 +12,7 @@
           </element>
           <element id="library" level="project" name="Maven: com.openpojo:openpojo:0.8.10" />
           <element id="library" level="project" name="Maven: org.postgresql:postgresql:42.2.4" />
+          <element id="library" level="project" name="Maven: javax.servlet:jstl:1.2" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-web:2.0.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter:2.0.4.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.boot:spring-boot-starter-logging:2.0.4.RELEASE" />
