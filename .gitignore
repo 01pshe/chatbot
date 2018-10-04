@@ -1,3 +1,4 @@
 /**/target
 /**/*.iml
+/module/src/main/resources/private.properties
 /.idea/

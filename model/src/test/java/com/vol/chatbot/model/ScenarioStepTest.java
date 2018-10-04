@@ -3,7 +3,7 @@ package com.vol.chatbot.model;
 import com.vol.chatbot.PojoTestUtils;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class ScenarioStepTest {
 

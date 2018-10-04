@@ -1,8 +1,7 @@
 package com.vol.chatbot.bot;
 
-import com.vol.chatbot.Constant;
-import com.vol.chatbot.knowledge.Task;
 import com.vol.chatbot.knowledge.InlineKeyboard;
+import com.vol.chatbot.knowledge.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -11,7 +10,9 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -25,7 +26,7 @@ public class KnowledgeCollectService implements BotService {
         User user = getUser(update);
         Long chatId = getChadId(update);
         Integer messageId = getMessageId(update);
-        LOGGER.info("messageId: {}, chatId: {}, user:{}", messageId, chatId, user.toString());
+        LOGGER.info("messageId: {}, chatId: {}, user:{}", messageId, chatId, user);
 
         if (update.hasCallbackQuery()) {
             addAnswer(update.getCallbackQuery());
@@ -37,7 +38,7 @@ public class KnowledgeCollectService implements BotService {
 
         List<Task> taskList = knowledge.getOrDefault(user, new ArrayList<>());
         taskList.add(task);
-        knowledge.put(user,taskList);
+        knowledge.put(user, taskList);
         return sendMessage;
 
     }
@@ -54,9 +55,7 @@ public class KnowledgeCollectService implements BotService {
         knowledge.getOrDefault(user, new ArrayList<>()).stream()
             .filter(task -> task.getUuid().equals(uuid))
             .findAny()
-            .ifPresent(task -> {
-                task.setAnswer(result);
-            });
+            .ifPresent(task -> task.setAnswer(result));
     }
 
     private Long getChadId(Update update) {
