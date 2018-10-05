@@ -25,7 +25,7 @@ public class QueueTest {
     public void test() throws Exception {
 
 
-        QueueService queueService = new ConcurentQueueService();
+        QueueService queueService = new ConcurrentQueueService();
         queueService.setMessageSender(this::write);
         LOGGER.info("Queue created.");
         LOGGER.info("Set TPS to 1.");

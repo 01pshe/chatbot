@@ -12,7 +12,7 @@
 
     <import resource="appconfig-data.xml"/>
 
-    <bean name="queueService" class="com.vol.chatbot.queue.ConcurentQueueService">
+    <bean name="queueService" class="com.vol.chatbot.queue.ConcurrentQueueService">
         <property name="tps" value="${queues.outgoing.tps}"/>
     </bean>
 

@@ -3,6 +3,8 @@ package com.vol.chatbot.queue;
 
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
+import java.util.function.Consumer;
+
 public interface QueueService {
 
     /**
@@ -25,7 +27,7 @@ public interface QueueService {
      *
      * @param sendMessageMethod - метод обработки сообщений(лямда)
      */
-    void setMessageSender(SendMessageMethod sendMessageMethod);
+    void setMessageSender(Consumer<SendMessage> sendMessageMethod);
 
 
     /**
