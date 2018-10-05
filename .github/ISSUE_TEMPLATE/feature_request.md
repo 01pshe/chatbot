@@ -1,17 +1,14 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
+name: Задача
+about: Предложите задачу для этого проекта
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**Задача вызвана конкретной проблемой? Опшишите ее.**
+Точно и подробно опишите проблему.
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Опишите решение**
+Точно и подробно опишите, ваш вариант решения проблемы.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+**Дополнительное описание**
+Добавьте произвольное описание, скриншоты, документы
