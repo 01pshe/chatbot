@@ -1,6 +1,8 @@
 package com.vol.chatbot.bot;
 
 import com.vol.chatbot.queue.QueueService;
+import com.vol.chatbot.model.Properties;
+import com.vol.chatbot.services.propertiesservice.PropertiesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +23,17 @@ public class Bot extends TelegramLongPollingBot {
     private String botToken;
     private BotService informationService;
     private BotService knowledgeService;
+    private PropertiesService propertiesService;
 
     @Autowired
     public Bot(@Qualifier("informationCollectService") BotService informationService,
                @Qualifier("knowledgeCollectService") BotService knowledgeService,
-               QueueService queueService) {
+               QueueService queueService,
+               PropertiesService propertiesService) {
         this.informationService = informationService;
         this.knowledgeService = knowledgeService;
         this.queueService = queueService;
+        this.propertiesService = propertiesService;
         this.queueService.setMessageSender(message -> {
             try {
                 this.execute(message);
@@ -45,7 +50,18 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        SendMessage sendMessage = getMessage(update);
+        SendMessage sendMessage;
+        if (!propertiesService.getAsBoolean(Properties.SuspendMode)) {
+            sendMessage = getMessage(update);
+        } else {
+            sendMessage = new SendMessage();
+            if (update.getMessage()!=null) {
+                sendMessage.setChatId(update.getMessage().getChatId());
+            } else if (update.getCallbackQuery()!=null){
+                sendMessage.setChatId(update.getCallbackQuery().getMessage().getChatId());
+            }
+            sendMessage.setText("Извините. Работа бота приостановлена.");
+        }
         queueService.add(sendMessage);
     }
 

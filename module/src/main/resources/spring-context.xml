@@ -16,6 +16,10 @@
         <property name="tps" value="${queues.outgoing.tps}"/>
     </bean>
 
+    <bean name="propertiesService" class="com.vol.chatbot.services.propertiesservice.PropertiesServiceImpl">
+        <property name="tps" value="${properties.refreshtps}"/>
+    </bean>
+
     <bean name="bot" class="com.vol.chatbot.bot.Bot">
         <property name="botToken" value="${bot.token}"/>
     </bean>
