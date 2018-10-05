@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class MessageSenderThread implements Runnable {
 
@@ -16,7 +17,7 @@ public class MessageSenderThread implements Runnable {
     private Queue<SendMessage> queue;
     private AtomicBoolean suspended;
     private AtomicBoolean shutDown;
-    private SendMessageMethod sendMessageMethod;
+    private Consumer<SendMessage> sendMessageMethod;
 
     private double tps = 20.0;
 
@@ -28,11 +29,11 @@ public class MessageSenderThread implements Runnable {
         this.shutDown = shutDown;
     }
 
-    public void setSendMessageMethod(SendMessageMethod sendMessageMethod) {
+    public void setSendMessageMethod(Consumer<SendMessage> sendMessageMethod) {
         this.sendMessageMethod = sendMessageMethod;
     }
 
-    public SendMessageMethod getSendMessageMethod() {
+    public Consumer<SendMessage> getSendMessageMethod() {
         return sendMessageMethod;
     }
 
@@ -40,7 +41,7 @@ public class MessageSenderThread implements Runnable {
         Optional message = Optional.ofNullable(this.queue.poll());
         if (message.isPresent()) {
             LOGGER.debug("sending message:{}", ((SendMessage) message.get()).getText());
-            sendMessageMethod.sendMessage((SendMessage) message.get());
+            sendMessageMethod.accept((SendMessage) message.get());
         }
     }
 

@@ -7,9 +7,10 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 @Service
-public class ConcurentQueueService implements QueueService {
+public class ConcurrentQueueService implements QueueService {
 
 
     private Queue<SendMessage> queue = new ConcurrentLinkedQueue<>();
@@ -18,11 +19,11 @@ public class ConcurentQueueService implements QueueService {
     private MessageSenderThread messageSender;
 
     @Autowired
-    public ConcurentQueueService() {
+    public ConcurrentQueueService() {
         this.messageSender = new MessageSenderThread(queue, suspended, shutDown);
     }
 
-    public void setMessageSender(SendMessageMethod sendMessageMethod) {
+    public void setMessageSender(Consumer<SendMessage> sendMessageMethod) {
         this.messageSender.setSendMessageMethod(sendMessageMethod);
     }
 
