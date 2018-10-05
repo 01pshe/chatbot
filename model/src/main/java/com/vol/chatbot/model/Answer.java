@@ -7,19 +7,19 @@ import javax.persistence.*;
 public class Answer {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "id", unique = false, nullable = false)
-    private String text;
+    @Column(name = "answer", unique = false, nullable = false)
+    private String answer;
 
-    @Column(name = "user_id", unique = false, nullable = false)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "question_id", unique = false, nullable = false)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
+    @JoinColumn(name = "question_id")
     private Question question;
 
 }

@@ -7,33 +7,36 @@ import javax.persistence.*;
 public class Question {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "text", unique = true, nullable = false)
+    @Column(name = "question", unique = true, nullable = false, length = 2048)
     private String text;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "weight", length = 9, unique = true, nullable = false)
     private QuestionWeight weight;
 
-    @Column(name = "day", unique = true, nullable = false)
-    private Integer day;
+    @Column(name = "useDay", unique = true, nullable = true)
+    private Integer useDay;
 
-    @Column(name = "answer1", unique = false, nullable = true)
-    private String answer1;
+    @Column(name = "answerA", unique = false, nullable = true)
+    private String answerA;
 
-    @Column(name = "answer2", unique = false, nullable = true)
-    private String answer2;
+    @Column(name = "answerB", unique = false, nullable = true)
+    private String answerB;
 
-    @Column(name = "answer3", unique = false, nullable = true)
-    private String answer3;
+    @Column(name = "answerC", unique = false, nullable = true)
+    private String answerC;
 
-    @Column(name = "answer4", unique = false, nullable = true)
-    private String answer4;
+    @Column(name = "answerD", unique = false, nullable = true)
+    private String answerD;
 
-    @Column(name = "answerRight", unique = false, nullable = false)
+    @Column(name = "answerR", unique = false, nullable = true)
+    private String answerR;
+
+    @Column(name = "answerRight", unique = false, nullable = true)
     private String answerRight;
 
 }

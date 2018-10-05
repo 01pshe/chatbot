@@ -98,6 +98,7 @@ public class HibernateExporter {
         String filename = directory + "ddl_" + dialect.toLowerCase() + ".sql";
         LOGGER.info("Output file name {}", filename);
         export.setOutputFile(filename);
+        export.setImportFiles(filename);
         export.setFormat(true);
 
         //can change the output here
