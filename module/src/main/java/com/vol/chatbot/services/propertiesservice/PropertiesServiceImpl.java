@@ -1,7 +1,7 @@
 package com.vol.chatbot.services.propertiesservice;
 
 import com.vol.chatbot.dao.PropertiesDao;
-import com.vol.chatbot.model.Properties;
+import com.vol.chatbot.model.impl.Properties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

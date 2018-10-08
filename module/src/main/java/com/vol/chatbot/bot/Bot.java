@@ -1,7 +1,9 @@
 package com.vol.chatbot.bot;
 
+import com.vol.chatbot.model.impl.Properties;
+import com.vol.chatbot.model.impl.User;
 import com.vol.chatbot.queue.QueueService;
-import com.vol.chatbot.model.Properties;
+import com.vol.chatbot.services.UserService;
 import com.vol.chatbot.services.propertiesservice.PropertiesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,16 +26,18 @@ public class Bot extends TelegramLongPollingBot {
     private BotService informationService;
     private BotService knowledgeService;
     private PropertiesService propertiesService;
+    private UserService userService;
 
     @Autowired
     public Bot(@Qualifier("informationCollectService") BotService informationService,
                @Qualifier("knowledgeCollectService") BotService knowledgeService,
                QueueService queueService,
-               PropertiesService propertiesService) {
+               PropertiesService propertiesService, UserService userService) {
         this.informationService = informationService;
         this.knowledgeService = knowledgeService;
         this.queueService = queueService;
         this.propertiesService = propertiesService;
+        this.userService = userService;
         this.queueService.setMessageSender(message -> {
             try {
                 this.execute(message);
@@ -51,28 +55,25 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         SendMessage sendMessage;
+        Long chatId = getChadId(update);
         if (!propertiesService.getAsBoolean(Properties.SuspendMode)) {
             sendMessage = getMessage(update);
         } else {
             sendMessage = new SendMessage();
-            if (update.getMessage()!=null) {
-                sendMessage.setChatId(update.getMessage().getChatId());
-            } else if (update.getCallbackQuery()!=null){
-                sendMessage.setChatId(update.getCallbackQuery().getMessage().getChatId());
-            }
             sendMessage.setText("Извините. Работа бота приостановлена.");
         }
+        sendMessage.setChatId(chatId);
         queueService.add(sendMessage);
     }
 
     private SendMessage getMessage(Update update) {
+        User user = getUser(update);
         if (update.hasCallbackQuery() || (update.getMessage().getText().equals("/run test"))) {
-            return knowledgeService.getMessage(update);
+            return knowledgeService.getMessage(user, update);
         } else {
-            return informationService.getMessage(update);
+            return informationService.getMessage(user, update);
         }
     }
-
 
     @Override
     public String getBotUsername() {
@@ -83,4 +84,25 @@ public class Bot extends TelegramLongPollingBot {
     public String getBotToken() {
         return this.botToken;
     }
+
+    private User getUser(Update update) {
+        org.telegram.telegrambots.meta.api.objects.User user;
+        if (update.hasCallbackQuery()) {
+            user = update.getCallbackQuery().getFrom();
+        } else {
+            user = update.getMessage().getFrom();
+        }
+        return userService.getBySignature(user.getId().toString());
+    }
+
+    private Long getChadId(Update update) {
+        Long chadId;
+        if (update.hasCallbackQuery()) {
+            chadId = update.getCallbackQuery().getMessage().getChatId();
+        } else {
+            chadId = update.getMessage().getChatId();
+        }
+        return chadId;
+    }
+
 }

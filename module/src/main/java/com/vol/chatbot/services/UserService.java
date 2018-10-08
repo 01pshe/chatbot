@@ -2,9 +2,9 @@ package com.vol.chatbot.services;
 
 import com.vol.chatbot.dao.ScenarioDao;
 import com.vol.chatbot.dao.UserDao;
-import com.vol.chatbot.model.Scenario;
-import com.vol.chatbot.model.User;
-import com.vol.chatbot.model.UserInfo;
+import com.vol.chatbot.model.impl.Scenario;
+import com.vol.chatbot.model.impl.User;
+import com.vol.chatbot.model.impl.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,10 @@ public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     private UserDao userDao;
-    private ScenarioDao scenarioDao;
 
     @Autowired
     public UserService(UserDao userDao, ScenarioDao scenarioDao) {
         this.userDao = userDao;
-        this.scenarioDao = scenarioDao;
     }
 
     public void save(User user) {

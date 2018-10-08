@@ -1,4 +1,4 @@
-package com.vol.chatbot.model;
+package com.vol.chatbot.model.impl;
 
 
 import javax.persistence.*;

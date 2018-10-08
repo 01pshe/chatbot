@@ -1,7 +1,7 @@
 package com.vol.chatbot.services;
 
 import com.vol.chatbot.dao.UserInfoDao;
-import com.vol.chatbot.model.UserInfo;
+import com.vol.chatbot.model.impl.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

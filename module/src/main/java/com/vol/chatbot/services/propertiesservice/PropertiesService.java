@@ -1,6 +1,6 @@
 package com.vol.chatbot.services.propertiesservice;
 
-import com.vol.chatbot.model.Properties;
+import com.vol.chatbot.model.impl.Properties;
 
 public interface PropertiesService {
 

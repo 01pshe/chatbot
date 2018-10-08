@@ -1,25 +1,16 @@
 package com.vol.chatbot.model;
 
-import javax.persistence.*;
+import com.vol.chatbot.model.impl.User;
 
-@Entity
-@Table(name = "bot_answer")
-public class Answer {
+public interface Answer {
+    String getAnswer();
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", unique = true, nullable = false)
-    private Long id;
+    void setAnswer(String answer);
 
-    @Column(name = "answer", unique = false, nullable = false)
-    private String answer;
+    User getUser();
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    void setUser(User user);
 
-    @ManyToOne
-    @JoinColumn(name = "question_id")
-    private Question question;
+    Question getQuestion();
 
 }

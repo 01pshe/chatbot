@@ -1,7 +1,7 @@
 package com.vol.chatbot.steps;
 
-import com.vol.chatbot.model.Message;
-import com.vol.chatbot.model.User;
+import com.vol.chatbot.model.impl.Message;
+import com.vol.chatbot.model.impl.User;
 import com.vol.chatbot.services.ScenarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

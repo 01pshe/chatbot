@@ -2,8 +2,8 @@ package com.vol.chatbot.services.propertiesservice;
 
 import com.google.common.util.concurrent.RateLimiter;
 import com.vol.chatbot.dao.PropertiesDao;
-import com.vol.chatbot.model.Properties;
-import com.vol.chatbot.model.Property;
+import com.vol.chatbot.model.impl.Properties;
+import com.vol.chatbot.model.impl.Property;
 
 import java.util.EnumMap;
 import java.util.List;

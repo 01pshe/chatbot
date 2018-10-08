@@ -1,6 +1,6 @@
 package com.vol.chatbot.dao;
 
-import com.vol.chatbot.model.User;
+import com.vol.chatbot.model.impl.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Set;
