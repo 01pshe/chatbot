@@ -1,29 +1,24 @@
 package com.vol.chatbot.knowledge;
 
+import com.vol.chatbot.Utils;
 import com.vol.chatbot.model.Question;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public final class InlineKeyboard {
-
     private InlineKeyboard() {
         throw new UnsupportedOperationException();
     }
 
     public static SendMessage getKeyboard(Question question) {
         SendMessage sendMessage = new SendMessage();
-        List<String> answers = new ArrayList<>();
-
-        answers.add(question.getAnswerA());
-        answers.add(question.getAnswerB());
-        answers.add(question.getAnswerC());
-        answers.add(question.getAnswerD());
-        Collections.shuffle(answers);
+        List<String> answers = Utils.getAnswersMix(question);
 
         InlineKeyboardMarkup markupInline = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInline = new ArrayList<>(answers.size());

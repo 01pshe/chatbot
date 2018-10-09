@@ -2,7 +2,7 @@ create sequence hibernate_sequence start 1 increment 1;
 
 create table bot_answer (
   id int8 not null,
-  answer varchar(255) not null,
+  answer varchar(255),
   question_id int8,
   user_id int8,
   primary key (id)
@@ -26,12 +26,12 @@ create table bot_properties (
 
 create table bot_question (
   id int8 not null,
-  answerA varchar(2048),
-  answerB varchar(2048),
-  answerC varchar(2048),
-  answerD varchar(2048),
-  answerR varchar(2048),
-  answerRight varchar(2048),
+  answerA varchar(60),
+  answerB varchar(60),
+  answerC varchar(60),
+  answerD varchar(60),
+  answerR varchar(60),
+  answerRight varchar(60),
   question varchar(4096) not null,
   useDay int4,
   weight varchar(9) not null,

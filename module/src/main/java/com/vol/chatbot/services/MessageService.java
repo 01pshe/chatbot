@@ -1,8 +1,8 @@
 package com.vol.chatbot.services;
 
 import com.vol.chatbot.dao.MessageDao;
-import com.vol.chatbot.model.impl.Message;
-import com.vol.chatbot.model.impl.User;
+import com.vol.chatbot.model.Message;
+import com.vol.chatbot.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

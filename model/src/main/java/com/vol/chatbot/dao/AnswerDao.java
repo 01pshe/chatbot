@@ -2,7 +2,7 @@ package com.vol.chatbot.dao;
 
 import com.vol.chatbot.model.Answer;
 import com.vol.chatbot.model.Question;
-import com.vol.chatbot.model.impl.User;
+import com.vol.chatbot.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

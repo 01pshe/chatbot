@@ -7,12 +7,12 @@ import com.vol.chatbot.knowledge.InlineKeyboard;
 import com.vol.chatbot.knowledge.QuestionFactory;
 import com.vol.chatbot.model.Answer;
 import com.vol.chatbot.model.Question;
-import com.vol.chatbot.model.impl.AnswerImpl;
-import com.vol.chatbot.model.impl.User;
+import com.vol.chatbot.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -27,7 +27,6 @@ public class KnowledgeCollectService implements BotService {
     private AnswerDao answerDao;
     private QuestionDao questionDao;
 
-
     @Autowired
     public KnowledgeCollectService(QuestionFactory questionFactory, UserDao userDao, AnswerDao answerDao, QuestionDao questionDao) {
         this.questionFactory = questionFactory;
@@ -35,6 +34,7 @@ public class KnowledgeCollectService implements BotService {
         this.questionDao = questionDao;
     }
 
+    @Transactional
     @Override
     public SendMessage getMessage(User user, Update update) {
 
@@ -66,7 +66,7 @@ public class KnowledgeCollectService implements BotService {
             LOGGER.warn("Несмогли распарсить ответ: {}", callbackQuery.getData(), e);
             return;
         }
-        Question question = questionDao.getOne(questionId);
+        Question question = questionDao.findById(questionId).orElse(null);
         List<Answer> answers = answerDao.findAllByUserAndQuestion(user, question);
 
         if (answers.size() != 1) {
@@ -74,7 +74,7 @@ public class KnowledgeCollectService implements BotService {
         }
 
         for (Answer answer : answers) {
-            if (answer.getAnswer() != null) {
+            if (answer.getAnswer() == null) {
                 answer.setAnswer(userAnswer);
                 answerDao.saveAndFlush(answer);
             }
@@ -83,13 +83,12 @@ public class KnowledgeCollectService implements BotService {
     }
 
     private void saveQuestionByUser(User user, Question question) {
-        AnswerImpl answer = new AnswerImpl();
+        Answer answer = new Answer();
         answer.setUser(user);
         answer.setQuestion(question);
         answerDao.saveAndFlush(answer);
         LOGGER.info("Пользователю {}, задали вопрос {}", user, question);
     }
-
 
     private Integer getMessageId(Update update) {
         Integer messageId;

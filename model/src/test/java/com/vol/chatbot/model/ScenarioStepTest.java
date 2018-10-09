@@ -1,7 +1,6 @@
 package com.vol.chatbot.model;
 
 import com.vol.chatbot.PojoTestUtils;
-import com.vol.chatbot.model.impl.ScenarioStep;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;

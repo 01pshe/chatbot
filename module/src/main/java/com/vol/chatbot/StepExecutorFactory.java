@@ -1,6 +1,6 @@
 package com.vol.chatbot;
 
-import com.vol.chatbot.model.impl.ScenarioStep;
+import com.vol.chatbot.model.ScenarioStep;
 import com.vol.chatbot.services.ApplicationContextProvider;
 import com.vol.chatbot.steps.StepExecutor;
 

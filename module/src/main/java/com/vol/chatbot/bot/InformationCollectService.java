@@ -1,8 +1,8 @@
 package com.vol.chatbot.bot;
 
 import com.vol.chatbot.StepExecutorFactory;
-import com.vol.chatbot.model.impl.Message;
-import com.vol.chatbot.model.impl.User;
+import com.vol.chatbot.model.Message;
+import com.vol.chatbot.model.User;
 import com.vol.chatbot.services.MessageService;
 import com.vol.chatbot.services.ScenarioService;
 import com.vol.chatbot.services.UserService;

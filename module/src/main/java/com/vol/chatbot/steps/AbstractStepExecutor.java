@@ -1,10 +1,10 @@
 package com.vol.chatbot.steps;
 
 import com.vol.chatbot.StepExecutorFactory;
-import com.vol.chatbot.model.impl.Message;
-import com.vol.chatbot.model.impl.Scenario;
-import com.vol.chatbot.model.impl.ScenarioStep;
-import com.vol.chatbot.model.impl.User;
+import com.vol.chatbot.model.Message;
+import com.vol.chatbot.model.Scenario;
+import com.vol.chatbot.model.ScenarioStep;
+import com.vol.chatbot.model.User;
 import com.vol.chatbot.services.ScenarioService;
 
 public abstract class AbstractStepExecutor implements StepExecutor {

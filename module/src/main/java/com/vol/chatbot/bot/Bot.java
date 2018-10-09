@@ -1,7 +1,7 @@
 package com.vol.chatbot.bot;
 
-import com.vol.chatbot.model.impl.Properties;
-import com.vol.chatbot.model.impl.User;
+import com.vol.chatbot.model.Properties;
+import com.vol.chatbot.model.User;
 import com.vol.chatbot.queue.QueueService;
 import com.vol.chatbot.services.UserService;
 import com.vol.chatbot.services.propertiesservice.PropertiesService;
@@ -40,9 +40,11 @@ public class Bot extends TelegramLongPollingBot {
         this.userService = userService;
         this.queueService.setMessageSender(message -> {
             try {
+                LOGGER.warn("message.getText(): {}", message.getText());
                 this.execute(message);
             } catch (TelegramApiException e) {
                 LOGGER.warn("ошибка отправки сообщения", e);
+                LOGGER.warn("message:{}", message);
             }
         });
         this.queueService.start();
@@ -68,11 +70,12 @@ public class Bot extends TelegramLongPollingBot {
 
     private SendMessage getMessage(Update update) {
         User user = getUser(update);
-        if (update.hasCallbackQuery() || (update.getMessage().getText().equals("/run test"))) {
+        //TODO сразу стартуем тест
+//        if (update.hasCallbackQuery() || (update.getMessage().getText().equals("/run test"))) {
             return knowledgeService.getMessage(user, update);
-        } else {
-            return informationService.getMessage(user, update);
-        }
+//        } else {
+//            return informationService.getMessage(user, update);
+//        }
     }
 
     @Override
@@ -86,13 +89,18 @@ public class Bot extends TelegramLongPollingBot {
     }
 
     private User getUser(Update update) {
-        org.telegram.telegrambots.meta.api.objects.User user;
+        org.telegram.telegrambots.meta.api.objects.User telegramUser;
         if (update.hasCallbackQuery()) {
-            user = update.getCallbackQuery().getFrom();
+            telegramUser = update.getCallbackQuery().getFrom();
         } else {
-            user = update.getMessage().getFrom();
+            telegramUser = update.getMessage().getFrom();
         }
-        return userService.getBySignature(user.getId().toString());
+        User user = userService.getBySignature(telegramUser.getId().toString());
+        if (user == null) {
+            user = userService.createUser(telegramUser);
+        }
+        return user;
+
     }
 
     private Long getChadId(Update update) {
