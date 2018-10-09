@@ -34,11 +34,11 @@ public class InformationCollectService implements BotService {
     }
 
     @Override
-    public SendMessage getMessage(Update update) {
+    public SendMessage getMessage(User user, Update update) {
         LOGGER.info("Get message <{}>\nfrom {}",
             update.getMessage().getText(),
             update.getMessage().getFrom().getFirstName());
-        User user = userService.getUser(update.getMessage().getFrom().getId().toString(), update.getMessage().getFrom());
+        LOGGER.info("user:{}", user);
         String answer;
         Message message = messageService.addInboundMessage(user, update.getMessage());
         answer = checkCommand(update.getMessage().getText());
@@ -49,7 +49,7 @@ public class InformationCollectService implements BotService {
                 .run(user, message);
         }
         LOGGER.info("Sending answer <{}>", answer);
-        SendMessage sendMessage = new SendMessage().setChatId(update.getMessage().getChatId());
+        SendMessage sendMessage = new SendMessage();
         sendMessage.enableHtml(true);
         sendMessage.setText(answer);
 

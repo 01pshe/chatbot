@@ -1,7 +1,9 @@
 package com.vol.chatbot.bot;
 
-import com.vol.chatbot.queue.QueueService;
 import com.vol.chatbot.model.Properties;
+import com.vol.chatbot.model.User;
+import com.vol.chatbot.queue.QueueService;
+import com.vol.chatbot.services.UserService;
 import com.vol.chatbot.services.propertiesservice.PropertiesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,21 +26,25 @@ public class Bot extends TelegramLongPollingBot {
     private BotService informationService;
     private BotService knowledgeService;
     private PropertiesService propertiesService;
+    private UserService userService;
 
     @Autowired
     public Bot(@Qualifier("informationCollectService") BotService informationService,
                @Qualifier("knowledgeCollectService") BotService knowledgeService,
                QueueService queueService,
-               PropertiesService propertiesService) {
+               PropertiesService propertiesService, UserService userService) {
         this.informationService = informationService;
         this.knowledgeService = knowledgeService;
         this.queueService = queueService;
         this.propertiesService = propertiesService;
+        this.userService = userService;
         this.queueService.setMessageSender(message -> {
             try {
+                LOGGER.warn("message.getText(): {}", message.getText());
                 this.execute(message);
             } catch (TelegramApiException e) {
                 LOGGER.warn("ошибка отправки сообщения", e);
+                LOGGER.warn("message:{}", message);
             }
         });
         this.queueService.start();
@@ -51,28 +57,26 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         SendMessage sendMessage;
+        Long chatId = getChadId(update);
         if (!propertiesService.getAsBoolean(Properties.SuspendMode)) {
             sendMessage = getMessage(update);
         } else {
             sendMessage = new SendMessage();
-            if (update.getMessage()!=null) {
-                sendMessage.setChatId(update.getMessage().getChatId());
-            } else if (update.getCallbackQuery()!=null){
-                sendMessage.setChatId(update.getCallbackQuery().getMessage().getChatId());
-            }
             sendMessage.setText("Извините. Работа бота приостановлена.");
         }
+        sendMessage.setChatId(chatId);
         queueService.add(sendMessage);
     }
 
     private SendMessage getMessage(Update update) {
-        if (update.hasCallbackQuery() || (update.getMessage().getText().equals("/run test"))) {
-            return knowledgeService.getMessage(update);
-        } else {
-            return informationService.getMessage(update);
-        }
+        User user = getUser(update);
+        //TODO сразу стартуем тест
+//        if (update.hasCallbackQuery() || (update.getMessage().getText().equals("/run test"))) {
+            return knowledgeService.getMessage(user, update);
+//        } else {
+//            return informationService.getMessage(user, update);
+//        }
     }
-
 
     @Override
     public String getBotUsername() {
@@ -83,4 +87,30 @@ public class Bot extends TelegramLongPollingBot {
     public String getBotToken() {
         return this.botToken;
     }
+
+    private User getUser(Update update) {
+        org.telegram.telegrambots.meta.api.objects.User telegramUser;
+        if (update.hasCallbackQuery()) {
+            telegramUser = update.getCallbackQuery().getFrom();
+        } else {
+            telegramUser = update.getMessage().getFrom();
+        }
+        User user = userService.getBySignature(telegramUser.getId().toString());
+        if (user == null) {
+            user = userService.createUser(telegramUser);
+        }
+        return user;
+
+    }
+
+    private Long getChadId(Update update) {
+        Long chadId;
+        if (update.hasCallbackQuery()) {
+            chadId = update.getCallbackQuery().getMessage().getChatId();
+        } else {
+            chadId = update.getMessage().getChatId();
+        }
+        return chadId;
+    }
+
 }

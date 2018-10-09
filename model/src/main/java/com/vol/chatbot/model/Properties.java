@@ -2,7 +2,9 @@ package com.vol.chatbot.model;
 
 public enum Properties {
 
-    SuspendMode("false");
+    SuspendMode("false"),
+    useDay("1"),
+    timeQuestionRefresh("60");
 
     private String defaultVal;
 

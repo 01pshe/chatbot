@@ -1,81 +1,93 @@
 package com.vol.chatbot.bot;
 
+import com.vol.chatbot.dao.AnswerDao;
+import com.vol.chatbot.dao.QuestionDao;
+import com.vol.chatbot.dao.UserDao;
 import com.vol.chatbot.knowledge.InlineKeyboard;
-import com.vol.chatbot.knowledge.Task;
+import com.vol.chatbot.knowledge.QuestionFactory;
+import com.vol.chatbot.model.Answer;
+import com.vol.chatbot.model.Question;
+import com.vol.chatbot.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class KnowledgeCollectService implements BotService {
     private static final Logger LOGGER = LoggerFactory.getLogger(KnowledgeCollectService.class);
-    private Map<User, List<Task>> knowledge = new ConcurrentHashMap<>();
 
+    private QuestionFactory questionFactory;
+    private AnswerDao answerDao;
+    private QuestionDao questionDao;
 
+    @Autowired
+    public KnowledgeCollectService(QuestionFactory questionFactory, UserDao userDao, AnswerDao answerDao, QuestionDao questionDao) {
+        this.questionFactory = questionFactory;
+        this.answerDao = answerDao;
+        this.questionDao = questionDao;
+    }
+
+    @Transactional
     @Override
-    public SendMessage getMessage(Update update) {
-        User user = getUser(update);
-        Long chatId = getChadId(update);
+    public SendMessage getMessage(User user, Update update) {
+
         Integer messageId = getMessageId(update);
-        LOGGER.info("messageId: {}, chatId: {}, user:{}", messageId, chatId, user);
+        LOGGER.info("messageId: {}, user:{}", messageId, user);
 
         if (update.hasCallbackQuery()) {
-            addAnswer(update.getCallbackQuery());
+            saveAnswerByUser(user, update.getCallbackQuery());
         }
-        Task task = new Task();
-        SendMessage sendMessage = InlineKeyboard.getKeyboard(task);
-        sendMessage.setText(task.getQuestion());
-        sendMessage.setChatId(chatId);
+        Question question = questionFactory.getQuestion(user);
 
-        List<Task> taskList = knowledge.getOrDefault(user, new ArrayList<>());
-        taskList.add(task);
-        knowledge.put(user, taskList);
+        SendMessage sendMessage = InlineKeyboard.getKeyboard(question);
+        sendMessage.setText(question.getQuestion());
+
+        saveQuestionByUser(user, question);
+
         return sendMessage;
 
     }
 
-    public List<Task> getUserTask(User user) {
-        return knowledge.getOrDefault(user, new ArrayList<>());
-    }
-
-    private void addAnswer(CallbackQuery callbackQuery) {
-        User user = callbackQuery.getFrom();
-        String[] array = callbackQuery.getData().split(";");
-        String uuid = array[0];
-        String result = array[1];
-        knowledge.getOrDefault(user, new ArrayList<>()).stream()
-            .filter(task -> task.getUuid().equals(uuid))
-            .findAny()
-            .ifPresent(task -> task.setAnswer(result));
-    }
-
-    private Long getChadId(Update update) {
-        Long chadId;
-        if (update.hasCallbackQuery()) {
-            chadId = update.getCallbackQuery().getMessage().getChatId();
-        } else {
-            chadId = update.getMessage().getChatId();
+    private void saveAnswerByUser(User user, CallbackQuery callbackQuery) {
+        Long questionId;
+        String userAnswer;
+        try {
+            String[] array = callbackQuery.getData().split(";");
+            questionId = Long.valueOf(array[0]);
+            userAnswer = array[1];
+        } catch (Exception e) {
+            LOGGER.warn("Несмогли распарсить ответ: {}", callbackQuery.getData(), e);
+            return;
         }
-        return chadId;
+        Question question = questionDao.findById(questionId).orElse(null);
+        List<Answer> answers = answerDao.findAllByUserAndQuestion(user, question);
+
+        if (answers.size() != 1) {
+            LOGGER.warn("Вопрос уже был задан несколько раз");
+        }
+
+        for (Answer answer : answers) {
+            if (answer.getAnswer() == null) {
+                answer.setAnswer(userAnswer);
+                answerDao.saveAndFlush(answer);
+            }
+        }
+
     }
 
-    private User getUser(Update update) {
-        User user;
-        if (update.hasCallbackQuery()) {
-            user = update.getCallbackQuery().getFrom();
-        } else {
-            user = update.getMessage().getFrom();
-        }
-        return user;
+    private void saveQuestionByUser(User user, Question question) {
+        Answer answer = new Answer();
+        answer.setUser(user);
+        answer.setQuestion(question);
+        answerDao.saveAndFlush(answer);
+        LOGGER.info("Пользователю {}, задали вопрос {}", user, question);
     }
 
     private Integer getMessageId(Update update) {

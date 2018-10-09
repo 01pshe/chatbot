@@ -2,9 +2,7 @@ package com.vol.chatbot.services;
 
 import com.vol.chatbot.dao.ScenarioDao;
 import com.vol.chatbot.dao.UserDao;
-import com.vol.chatbot.model.Scenario;
 import com.vol.chatbot.model.User;
-import com.vol.chatbot.model.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +18,10 @@ public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     private UserDao userDao;
-    private ScenarioDao scenarioDao;
 
     @Autowired
     public UserService(UserDao userDao, ScenarioDao scenarioDao) {
         this.userDao = userDao;
-        this.scenarioDao = scenarioDao;
     }
 
     public void save(User user) {
@@ -57,25 +53,36 @@ public class UserService {
         return set;
     }
 
+
+    //TODO создание пользователя вынесено в
     public User getUser(String signature, org.telegram.telegrambots.meta.api.objects.User telegramUser) {
         User user = getBySignature(signature);
         if (user != null) {
             return user;
         }
+        user = createUser(telegramUser);
+
+//        Scenario scenario = new Scenario();
+//        scenario.setUser(user);
+//        scenario.setCurrentStepNumber(0);
+//        UserInfo userInfo = new UserInfo();
+//        userInfo.setId(scenario.getId());
+//        user.setScenario(scenario);
+//        user.setUserInfo(userInfo);
+//        save(user);
+        return user;
+
+    }
+
+    public User createUser(org.telegram.telegrambots.meta.api.objects.User telegramUser) {
+        User user;
         user = new User();
         user.setBot(telegramUser.getBot());
-        user.setSignature(signature);
+        user.setSignature(telegramUser.getId().toString());
         user.setUserFirstName(telegramUser.getFirstName());
         user.setUserLastName(telegramUser.getLastName());
         user.setUserName(telegramUser.getUserName());
         user.setDatecreate(new Date());
-        Scenario scenario = new Scenario();
-        scenario.setUser(user);
-        scenario.setCurrentStepNumber(0);
-        UserInfo userInfo = new UserInfo();
-        userInfo.setId(scenario.getId());
-        user.setScenario(scenario);
-        user.setUserInfo(userInfo);
         save(user);
         return user;
     }
