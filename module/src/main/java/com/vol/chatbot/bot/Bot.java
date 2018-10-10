@@ -55,20 +55,15 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         SendMessage sendMessage;
         if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
-            sendMessage = getMessage(update);
+            User user = userService.getUser(update);
+            sendMessage = knowledgeService.createResponse(user, update);
         } else {
             sendMessage = new SendMessage();
-            sendMessage.setText("Извините. Работа бота приостановлена.");
+            sendMessage.setText(propertiesService.getAsString(Properties.SUSPEND_TEXT));
         }
         Long chatId = getChadId(update);
         sendMessage.setChatId(chatId);
         queueService.add(sendMessage);
-    }
-
-    private SendMessage getMessage(Update update) {
-        User user = userService.getUser(update);
-        return knowledgeService.createResponse(user, update);
-
     }
 
     @Override
