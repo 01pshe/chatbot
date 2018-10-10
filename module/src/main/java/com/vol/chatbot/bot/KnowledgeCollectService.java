@@ -36,7 +36,7 @@ public class KnowledgeCollectService implements BotService {
 
     @Transactional
     @Override
-    public SendMessage getMessage(User user, Update update) {
+    public SendMessage createResponse(User user, Update update) {
 
         Integer messageId = getMessageId(update);
         LOGGER.info("messageId: {}, user:{}", messageId, user);
@@ -74,8 +74,8 @@ public class KnowledgeCollectService implements BotService {
         }
 
         for (Answer answer : answers) {
-            if (answer.getAnswer() == null) {
-                answer.setAnswer(userAnswer);
+            if (answer.getUserAnswer() == null) {
+                answer.setUserAnswer(userAnswer);
                 answerDao.saveAndFlush(answer);
             }
         }

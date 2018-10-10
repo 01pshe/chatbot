@@ -7,12 +7,12 @@ import javax.persistence.*;
 public class Property {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name ="property_name", unique = true, nullable = false)
+    @Column(name = "property_name", unique = true, nullable = false)
     private Properties propertyName;
 
     @Column(name = "property_value")

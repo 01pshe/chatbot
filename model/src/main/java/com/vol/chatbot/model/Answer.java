@@ -4,15 +4,15 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "bot_answer")
-public class Answer{
+public class Answer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @Column(name = "answer", unique = false, nullable = true)
-    private String answer;
+    @Column(name = "user_answer")
+    private String userAnswer;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -22,12 +22,16 @@ public class Answer{
     @JoinColumn(name = "question_id")
     private Question question;
 
-    public String getAnswer() {
-        return answer;
+    public Long getId() {
+        return id;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
+    public String getUserAnswer() {
+        return userAnswer;
+    }
+
+    public void setUserAnswer(String userAnswer) {
+        this.userAnswer = userAnswer;
     }
 
     public User getUser() {

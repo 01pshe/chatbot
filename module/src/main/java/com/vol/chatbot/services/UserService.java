@@ -1,12 +1,12 @@
 package com.vol.chatbot.services;
 
-import com.vol.chatbot.dao.ScenarioDao;
 import com.vol.chatbot.dao.UserDao;
 import com.vol.chatbot.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Date;
 import java.util.Set;
@@ -20,7 +20,7 @@ public class UserService {
     private UserDao userDao;
 
     @Autowired
-    public UserService(UserDao userDao, ScenarioDao scenarioDao) {
+    public UserService(UserDao userDao) {
         this.userDao = userDao;
     }
 
@@ -53,23 +53,23 @@ public class UserService {
         return set;
     }
 
+    public User getUser(Update update) {
+        org.telegram.telegrambots.meta.api.objects.User telegramUser;
+        if (update.hasCallbackQuery()) {
+            telegramUser = update.getCallbackQuery().getFrom();
+        } else {
+            telegramUser = update.getMessage().getFrom();
+        }
+        return getUser(telegramUser);
+    }
 
-    //TODO создание пользователя вынесено в
-    public User getUser(String signature, org.telegram.telegrambots.meta.api.objects.User telegramUser) {
-        User user = getBySignature(signature);
+
+    public User getUser(org.telegram.telegrambots.meta.api.objects.User telegramUser) {
+        User user = getBySignature(telegramUser.getId().toString());
         if (user != null) {
             return user;
         }
         user = createUser(telegramUser);
-
-//        Scenario scenario = new Scenario();
-//        scenario.setUser(user);
-//        scenario.setCurrentStepNumber(0);
-//        UserInfo userInfo = new UserInfo();
-//        userInfo.setId(scenario.getId());
-//        user.setScenario(scenario);
-//        user.setUserInfo(userInfo);
-//        save(user);
         return user;
 
     }

@@ -2,8 +2,6 @@ package com.vol.chatbot.knowledge;
 
 import com.vol.chatbot.Utils;
 import com.vol.chatbot.model.Question;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;

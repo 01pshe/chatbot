@@ -1,7 +1,5 @@
 package com.vol.chatbot.model;
 
-import com.vol.chatbot.model.Question;
-
 import javax.persistence.*;
 
 @Entity
@@ -17,28 +15,28 @@ public class Question {
     private String question;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "weight", length = 9, unique = false, nullable = false)
+    @Column(name = "weight", length = 9, nullable = false)
     private QuestionWeight weight;
 
-    @Column(name = "useDay", unique = false, nullable = true)
+    @Column(name = "useDay")
     private Integer useDay;
 
-    @Column(name = "answerA", unique = false, nullable = true, length = 60)
+    @Column(name = "answerA", length = 60)
     private String answerA;
 
-    @Column(name = "answerB", unique = false, nullable = true, length = 60)
+    @Column(name = "answerB", length = 60)
     private String answerB;
 
-    @Column(name = "answerC", unique = false, nullable = true, length = 60)
+    @Column(name = "answerC", length = 60)
     private String answerC;
 
-    @Column(name = "answerD", unique = false, nullable = true, length = 60)
+    @Column(name = "answerD", length = 60)
     private String answerD;
 
-    @Column(name = "answerR", unique = false, nullable = true, length = 60)
+    @Column(name = "answerR", length = 60)
     private String answerR;
 
-    @Column(name = "answerRight", unique = false, nullable = true, length = 60)
+    @Column(name = "answerRight", length = 60)
     private String answerRight;
 
     public Long getId() {
@@ -79,7 +77,7 @@ public class Question {
             "id=" + id +
             ", question='" + question + '\'' +
             ", weight=" + weight +
-            ", useDay=" + useDay +
+            ", CURRENT_DAY=" + useDay +
             ", answerA='" + answerA + '\'' +
             ", answerB='" + answerB + '\'' +
             ", answerC='" + answerC + '\'' +

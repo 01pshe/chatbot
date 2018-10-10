@@ -23,24 +23,21 @@ public class Bot extends TelegramLongPollingBot {
 
     private QueueService queueService;
     private String botToken;
-    private BotService informationService;
     private BotService knowledgeService;
     private PropertiesService propertiesService;
     private UserService userService;
 
     @Autowired
-    public Bot(@Qualifier("informationCollectService") BotService informationService,
-               @Qualifier("knowledgeCollectService") BotService knowledgeService,
+    public Bot(@Qualifier("knowledgeCollectService") BotService knowledgeService,
                QueueService queueService,
-               PropertiesService propertiesService, UserService userService) {
-        this.informationService = informationService;
+               PropertiesService propertiesService,
+               UserService userService) {
         this.knowledgeService = knowledgeService;
         this.queueService = queueService;
         this.propertiesService = propertiesService;
         this.userService = userService;
         this.queueService.setMessageSender(message -> {
             try {
-                LOGGER.warn("message.getText(): {}", message.getText());
                 this.execute(message);
             } catch (TelegramApiException e) {
                 LOGGER.warn("ошибка отправки сообщения", e);
@@ -57,25 +54,21 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         SendMessage sendMessage;
-        Long chatId = getChadId(update);
-        if (!propertiesService.getAsBoolean(Properties.SuspendMode)) {
+        if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
             sendMessage = getMessage(update);
         } else {
             sendMessage = new SendMessage();
             sendMessage.setText("Извините. Работа бота приостановлена.");
         }
+        Long chatId = getChadId(update);
         sendMessage.setChatId(chatId);
         queueService.add(sendMessage);
     }
 
     private SendMessage getMessage(Update update) {
-        User user = getUser(update);
-        //TODO сразу стартуем тест
-//        if (update.hasCallbackQuery() || (update.getMessage().getText().equals("/run test"))) {
-            return knowledgeService.getMessage(user, update);
-//        } else {
-//            return informationService.getMessage(user, update);
-//        }
+        User user = userService.getUser(update);
+        return knowledgeService.createResponse(user, update);
+
     }
 
     @Override
@@ -88,20 +81,6 @@ public class Bot extends TelegramLongPollingBot {
         return this.botToken;
     }
 
-    private User getUser(Update update) {
-        org.telegram.telegrambots.meta.api.objects.User telegramUser;
-        if (update.hasCallbackQuery()) {
-            telegramUser = update.getCallbackQuery().getFrom();
-        } else {
-            telegramUser = update.getMessage().getFrom();
-        }
-        User user = userService.getBySignature(telegramUser.getId().toString());
-        if (user == null) {
-            user = userService.createUser(telegramUser);
-        }
-        return user;
-
-    }
 
     private Long getChadId(Update update) {
         Long chadId;
