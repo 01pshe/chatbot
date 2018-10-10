@@ -31,14 +31,6 @@ public class User {
     @Column(name = "datecreate")
     private Date datecreate;
 
-    //TODO пока закоментровал так как не понятно как быть с идентификацией польхователем
- /*
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
-    private UserInfo userInfo;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
-    private Scenario scenario;
-*/
     public User() {
         // Do nothing
     }
@@ -99,22 +91,6 @@ public class User {
         this.datecreate = datecreate;
     }
 
-    //TODO пока закоментровал так как не понятно как быть с идентификацией польхователем
-        public UserInfo getUserInfo() {
-            throw new UnsupportedOperationException();
-        }
-
-        public void setUserInfo(UserInfo userInfo) {
-            throw new UnsupportedOperationException();
-        }
-
-        public Scenario getScenario() {
-            throw new UnsupportedOperationException();
-        }
-
-        public void setScenario(Scenario scenario) {
-            throw new UnsupportedOperationException();
-        }
     @Override
     public String toString() {
         return "User{" +
@@ -125,9 +101,6 @@ public class User {
             ", userName='" + userName + '\'' +
             ", bot=" + bot +
             ", datecreate=" + datecreate +
-            //TODO пока закоментровал так как не понятно как быть с идентификацией польхователем
-//            ", userInfo=" + userInfo +
-//            ", scenario=" + scenario +
             '}';
     }
 
