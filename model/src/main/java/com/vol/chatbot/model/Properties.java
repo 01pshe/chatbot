@@ -1,5 +1,8 @@
 package com.vol.chatbot.model;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 public enum Properties {
 
     SUSPEND_MODE("false"),
@@ -43,5 +46,17 @@ public enum Properties {
 
     public String getDefaultVal() {
         return defaultVal;
+    }
+
+    public static boolean exist(String prop){
+        boolean found = false;
+        Iterator<Properties> iter = Arrays.asList(Properties.values()).iterator();
+        while (iter.hasNext()&&!found){
+            Properties tmp = iter.next();
+            if (tmp.name().equals(prop)){
+                found= true;
+            }
+        }
+        return found;
     }
 }

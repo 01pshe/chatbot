@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 @Service
 @Qualifier("commandProcessor")
 public class CommandProcessor implements BotService {
@@ -23,32 +26,55 @@ public class CommandProcessor implements BotService {
 
 
     public enum Command {
-        PROPERTY
+        PROPERTY,
+        UNSUPPORTED
     }
 
     @Override
     public SendMessage createResponse(User user, Update update) {
         String msg = update.getMessage().getText().substring(1).toUpperCase();
         int pos = msg.indexOf(' ');
-        String com = "";
+        String stringCommand;
         String args = "";
-        if (pos<0){
-            com = msg.substring(0, pos);
+        if (pos>0){
+            stringCommand = msg.substring(0, pos);
             args = msg.substring(pos + 1);
         } else {
-            com = msg;
+            stringCommand = msg;
         }
-        Command command = Command.valueOf(com);
+        Command command = getCommandFromString(stringCommand);
+
+        return processCommand(command, args,update.getMessage().getChatId());
+
+    }
+
+    private Command getCommandFromString(String commandString){
+        Command command = Command.UNSUPPORTED;
+        Iterator<Command> iter = Arrays.asList(Command.values()).iterator();
+        while (iter.hasNext()&&command==Command.UNSUPPORTED){
+            Command tmp = iter.next();
+            if (tmp.name().equals(commandString)){
+                command = tmp;
+            }
+        }
+        return command;
+    }
+
+    private SendMessage processCommand (Command command, String args, Long chatId){
         SendMessage answer = new SendMessage();
-        answer.setChatId(update.getMessage().getChatId());
+        answer.setChatId(chatId);
 
         switch (command) {
             case PROPERTY:
-                Properties prop = Properties.valueOf(args);
-                answer.setText(propertiesService.getAsString(prop));
+                if (Properties.exist(args)) {
+                    Properties prop = Properties.valueOf(args);
+                    answer.setText(propertiesService.getAsString(prop));
+                } else {
+                    answer.setText("Указанной настройки не существует.");
+                }
                 break;
             default:
-                answer.setText("Команда не поддерживается");
+                answer.setText("Команда не поддерживается.");
                 break;
         }
         return answer;
