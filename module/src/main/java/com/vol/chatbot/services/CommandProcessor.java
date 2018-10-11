@@ -44,7 +44,7 @@ public class CommandProcessor implements BotService {
         }
         Command command = getCommandFromString(stringCommand);
 
-        return processCommand(command, args,update.getMessage().getChatId());
+        return processCommand(command, args);
 
     }
 
@@ -60,10 +60,8 @@ public class CommandProcessor implements BotService {
         return command;
     }
 
-    private SendMessage processCommand (Command command, String args, Long chatId){
+    private SendMessage processCommand(Command command, String args) {
         SendMessage answer = new SendMessage();
-        answer.setChatId(chatId);
-
         switch (command) {
             case PROPERTY:
                 if (Properties.exist(args)) {

@@ -67,22 +67,6 @@ public class Overload{
 Результатом его компиляции и выполнения будет:', 1, 'DIFFICULT');
 
 INSERT INTO public.bot_question (id, answera, answerb, answerc, answerd, answerr, answerright, question, useday, weight)
-VALUES (nextval('hibernate_sequence'), '«Himalaya» но НЕ будет выведено «Getting Name»',
-        '«Getting Name» и «Himalaya»', 'Будет выброшен NullPointerException',
-        '«Getting Name», а потом выброшено NullPointerException', 'B',
-        '«Getting Name» и «Himalaya»', 'Что произойдет при попытке выполнения данного кода:
-class Mountain {
-  static String name = ""Himalaya"";
-  static Mountain getMountain() {
-    System.out.println(""Getting Name"");
-    return null;
-  }
-  public static void main(String[ ] args) {
-    System.out.println( getMountain().name );
-  }
-}', 1, 'MEDIUM');
-
-INSERT INTO public.bot_question (id, answera, answerb, answerc, answerd, answerr, answerright, question, useday, weight)
 VALUES (nextval('hibernate_sequence'), 'true true', 'false false', 'true false', 'false true', 'G', 'true false', 'Integer a = 120;
 Integer b = 120;
 Integer c = 130;

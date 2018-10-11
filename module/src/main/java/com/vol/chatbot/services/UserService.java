@@ -83,6 +83,7 @@ public class UserService {
         user.setUserLastName(telegramUser.getLastName());
         user.setUserName(telegramUser.getUserName());
         user.setDatecreate(new Date());
+        user.setPassDay(0);
         save(user);
         return user;
     }

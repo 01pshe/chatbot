@@ -26,18 +26,18 @@ public class Bot extends TelegramLongPollingBot {
 
     private QueueService queueService;
     private String botToken;
-    private BotService knowledgeService;
+    private BotService answerCollectService;
     private BotService commandProcessor;
     private PropertiesService propertiesService;
     private UserService userService;
 
     @Autowired
-    public Bot(@Qualifier("knowledgeCollectService") BotService knowledgeService,
+    public Bot(@Qualifier("answerCollectService") BotService answerCollectService,
                @Qualifier("commandProcessor") BotService commandProcessor,
                QueueService queueService,
                PropertiesService propertiesService,
                UserService userService) {
-        this.knowledgeService = knowledgeService;
+        this.answerCollectService = answerCollectService;
         this.queueService = queueService;
         this.commandProcessor = commandProcessor;
         this.propertiesService = propertiesService;
@@ -64,21 +64,26 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        SendMessage sendMessage;
+        SendMessage sendMessage ;
         if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
             User user = userService.getUser(update);
             if (isCommand(update)) {
                 sendMessage = commandProcessor.createResponse(user,update);
             } else {
-                sendMessage = knowledgeService.createResponse(user, update);
+                sendMessage = answerCollectService.createResponse(user, update);
             }
         } else {
             sendMessage = new SendMessage();
             sendMessage.setText(propertiesService.getAsString(Properties.SUSPEND_TEXT));
         }
-        Long chatId = getChadId(update);
-        sendMessage.setChatId(chatId);
-        queueService.add(sendMessage);
+
+        if (sendMessage != null) {
+            Long chatId = getChadId(update);
+            sendMessage.setChatId(chatId);
+            queueService.add(sendMessage);
+        } else {
+            LOGGER.info("Пустоее сообение не отпровляем!!!");
+        }
     }
 
     @Override

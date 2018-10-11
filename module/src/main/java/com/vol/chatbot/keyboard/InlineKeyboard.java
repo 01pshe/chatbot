@@ -1,4 +1,4 @@
-package com.vol.chatbot.knowledge;
+package com.vol.chatbot.keyboard;
 
 import com.vol.chatbot.Utils;
 import com.vol.chatbot.model.Question;
