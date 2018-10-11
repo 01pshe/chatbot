@@ -12,8 +12,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.Optional;
 
 
 @Component
@@ -24,16 +27,19 @@ public class Bot extends TelegramLongPollingBot {
     private QueueService queueService;
     private String botToken;
     private BotService knowledgeService;
+    private BotService commandProcessor;
     private PropertiesService propertiesService;
     private UserService userService;
 
     @Autowired
     public Bot(@Qualifier("knowledgeCollectService") BotService knowledgeService,
+               @Qualifier("commandProcessor") BotService commandProcessor,
                QueueService queueService,
                PropertiesService propertiesService,
                UserService userService) {
         this.knowledgeService = knowledgeService;
         this.queueService = queueService;
+        this.commandProcessor = commandProcessor;
         this.propertiesService = propertiesService;
         this.userService = userService;
         this.queueService.setMessageSender(message -> {
@@ -51,12 +57,21 @@ public class Bot extends TelegramLongPollingBot {
         this.botToken = botToken;
     }
 
+    private boolean isCommand(Update update){
+        String msgText = Optional.ofNullable(update.getMessage()).map(Message::getText).orElse("");
+        return msgText.length() > 0 && msgText.startsWith("/");
+    }
+
     @Override
     public void onUpdateReceived(Update update) {
         SendMessage sendMessage;
         if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
             User user = userService.getUser(update);
-            sendMessage = knowledgeService.createResponse(user, update);
+            if (isCommand(update)) {
+                sendMessage = commandProcessor.createResponse(user,update);
+            } else {
+                sendMessage = knowledgeService.createResponse(user, update);
+            }
         } else {
             sendMessage = new SendMessage();
             sendMessage.setText(propertiesService.getAsString(Properties.SUSPEND_TEXT));
