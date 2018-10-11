@@ -21,22 +21,22 @@ public class Question {
     @Column(name = "useDay")
     private Integer useDay;
 
-    @Column(name = "answerA", length = 60)
+    @Column(name = "answerA", length = 35)
     private String answerA;
 
-    @Column(name = "answerB", length = 60)
+    @Column(name = "answerB", length = 35)
     private String answerB;
 
-    @Column(name = "answerC", length = 60)
+    @Column(name = "answerC", length = 35)
     private String answerC;
 
-    @Column(name = "answerD", length = 60)
+    @Column(name = "answerD", length = 35)
     private String answerD;
 
-    @Column(name = "answerR", length = 60)
+    @Column(name = "answerR", length = 35)
     private String answerR;
 
-    @Column(name = "answerRight", length = 60)
+    @Column(name = "answerRight", length = 35)
     private String answerRight;
 
     public Long getId() {

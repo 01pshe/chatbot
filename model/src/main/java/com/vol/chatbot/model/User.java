@@ -31,12 +31,23 @@ public class User {
     @Column(name = "datecreate")
     private Date datecreate;
 
+    @Column(name = "pass_day")
+    private Integer passDay;
+
     public User() {
         // Do nothing
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Integer getPassDay() {
+        return passDay;
+    }
+
+    public void setPassDay(Integer passDay) {
+        this.passDay = passDay;
     }
 
     public void setId(Long id) {
