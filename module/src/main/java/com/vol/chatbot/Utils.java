@@ -10,9 +10,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class Utils {
+    private static Random random = new Random();
 
     private Utils() {
         throw new UnsupportedOperationException();
+    }
+
+    public static int getRandomInt(int max) {
+        return random.nextInt(max);
     }
 
     public static List<String> getAnswersMix(Question question) {

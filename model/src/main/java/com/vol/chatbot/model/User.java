@@ -28,11 +28,17 @@ public class User {
     @Column(name = "bot")
     private boolean bot;
 
-    @Column(name = "datecreate")
-    private Date datecreate;
+    @Column(name = "dateCreate")
+    private Date dateCreate;
 
     @Column(name = "pass_day")
     private Integer passDay;
+
+    @Column(name = "day_one_result")
+    private String dayOneResult;
+
+    @Column(name = "day_two_result")
+    private String dayTwoResult;
 
     public User() {
         // Do nothing
@@ -94,12 +100,28 @@ public class User {
         this.bot = bot;
     }
 
-    public Date getDatecreate() {
-        return datecreate;
+    public Date getDateCreate() {
+        return dateCreate;
     }
 
-    public void setDatecreate(Date datecreate) {
-        this.datecreate = datecreate;
+    public void setDateCreate(Date dateCreate) {
+        this.dateCreate = dateCreate;
+    }
+
+    public String getDayOneResult() {
+        return dayOneResult;
+    }
+
+    public void setDayOneResult(String dayOneResult) {
+        this.dayOneResult = dayOneResult;
+    }
+
+    public String getDayTwoResult() {
+        return dayTwoResult;
+    }
+
+    public void setDayTwoResult(String dayTwoResult) {
+        this.dayTwoResult = dayTwoResult;
     }
 
     @Override
@@ -111,7 +133,7 @@ public class User {
             ", userLastName='" + userLastName + '\'' +
             ", userName='" + userName + '\'' +
             ", bot=" + bot +
-            ", datecreate=" + datecreate +
+            ", dateCreate=" + dateCreate +
             '}';
     }
 

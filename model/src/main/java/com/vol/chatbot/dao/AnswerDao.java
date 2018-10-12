@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public interface AnswerDao extends JpaRepository<Answer, Long> {
 
@@ -14,9 +15,13 @@ public interface AnswerDao extends JpaRepository<Answer, Long> {
 
     List<Answer> findAllByUserAndQuestion(User user, Question question);
 
-    default List<Question> findQuestionAllByUser(User user) {
-        return findAllByUser(user).stream().map(Answer::getQuestion).collect(Collectors.toList());
+    default List<Question> findQuestionAllByUserAndDayAnswer(User user,Integer day) {
+        return findAllByUser(user).stream()
+            .filter(answer -> answer.getDayAnswer().equals(day))
+            .map(Answer::getQuestion)
+            .collect(Collectors.toList());
     }
 
+    Stream<Answer> findAllByUserAndDayAnswer(User user, Integer day);
 
 }

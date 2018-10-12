@@ -14,6 +14,9 @@ public class Answer {
     @Column(name = "user_answer")
     private String userAnswer;
 
+    @Column(name = "day_answer")
+    private Integer dayAnswer;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -48,5 +51,13 @@ public class Answer {
 
     public void setQuestion(Question question) {
         this.question = question;
+    }
+
+    public Integer getDayAnswer() {
+        return dayAnswer;
+    }
+
+    public void setDayAnswer(Integer dayAnswer) {
+        this.dayAnswer = dayAnswer;
     }
 }

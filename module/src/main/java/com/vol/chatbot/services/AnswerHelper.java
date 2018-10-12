@@ -12,7 +12,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class AnswerHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnswerHelper.class);
@@ -21,21 +20,21 @@ public class AnswerHelper {
     private CallbackQuery callbackQuery;
     private Boolean isCallback;
     private User user;
-
+    private int sysCurrentDay;
     private AnswerDao answerDao;
     private QuestionDao questionDao;
 
-    private Optional<Question> question = Optional.empty();
-
     private List<Question> passedQuestions;
+
+    // Последний заддонный вопрос
     private List<Answer> answer = new ArrayList<>();
 
-
-    public AnswerHelper(User user, Update update, AnswerDao answerDao, QuestionDao questionDao) {
+    public AnswerHelper(User user, int sysCurrentDay, Update update, AnswerDao answerDao, QuestionDao questionDao) {
         this.user = user;
+        this.sysCurrentDay = sysCurrentDay;
         this.answerDao = answerDao;
         this.questionDao = questionDao;
-        passedQuestions = answerDao.findQuestionAllByUser(user);
+        passedQuestions = answerDao.findQuestionAllByUserAndDayAnswer(user, this.sysCurrentDay);
 
         if (update.hasCallbackQuery()) {
             initCallback(update);
@@ -44,12 +43,25 @@ public class AnswerHelper {
         }
     }
 
-    public Boolean isEndTest() {
-        return QuestionService.DAY_QUESTION_CNT <= passedQuestions.size();
+    public Boolean isEndCurrentDay() {
+        return user.getPassDay() >= this.sysCurrentDay;
+    }
+
+    public Boolean isEndCurrentDayTest() {
+        return Constants.DAY_QUESTION_CNT <= passedQuestions.size();
     }
 
     public Boolean isTwiceAnswered() {
         return this.answer.stream().anyMatch(a -> a.getUserAnswer() != null);
+    }
+
+    public UserResult getUserResultByCurrentDay() {
+        UserResult currentResult = new UserResult();
+        answerDao.findAllByUserAndDayAnswer(this.user, this.sysCurrentDay)
+            .filter(entity -> entity.getQuestion() != null)
+            .forEach(entity ->
+                currentResult.incAnswer(entity.getQuestion().getWeight(), entity.getQuestion().checkResult(entity.getUserAnswer())));
+        return currentResult;
     }
 
     private void initMessage(Update update) {
@@ -63,8 +75,8 @@ public class AnswerHelper {
             String[] array = callbackQuery.getData().split(";");
             this.questionId = Long.valueOf(array[0]);
             this.userAnswer = array[1];
-            this.question = questionDao.findById(this.questionId);
-            this.question.ifPresent(q -> this.answer = answerDao.findAllByUserAndQuestion(this.user, q));
+            this.questionDao.findById(this.questionId)
+                .ifPresent(q -> this.answer = answerDao.findAllByUserAndQuestion(this.user, q));
 
         } catch (Exception e) {
             LOGGER.warn("Несмогли распарсить ответ: {}", callbackQuery.getData(), e);
@@ -79,27 +91,16 @@ public class AnswerHelper {
         return answer;
     }
 
-    public Long getQuestionId() {
-        return questionId;
-    }
-
     public String getUserAnswer() {
         return userAnswer;
-    }
-
-    public CallbackQuery getCallbackQuery() {
-        return callbackQuery;
     }
 
     public User getUser() {
         return user;
     }
 
-    public Boolean isCallback() {
-        return isCallback;
+    public int getSysCurrentDay() {
+        return sysCurrentDay;
     }
 
-    public Optional<Question> getQuestion() {
-        return question;
-    }
 }
