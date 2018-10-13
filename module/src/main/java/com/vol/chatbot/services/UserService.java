@@ -1,7 +1,9 @@
 package com.vol.chatbot.services;
 
 import com.vol.chatbot.dao.UserDao;
+import com.vol.chatbot.model.Properties;
 import com.vol.chatbot.model.User;
+import com.vol.chatbot.services.propertiesservice.PropertiesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +20,17 @@ public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     private UserDao userDao;
+    private PropertiesService propertiesService;
 
     @Autowired
-    public UserService(UserDao userDao) {
+    public UserService(UserDao userDao, PropertiesService propertiesService) {
         this.userDao = userDao;
+        this.propertiesService = propertiesService;
     }
 
     public void save(User user) {
         LOGGER.trace("Saving user id= {}, signature= {}.", user.getId(), user.getSignature());
-        userDao.save(user);
+        userDao.saveAndFlush(user);
         LOGGER.trace("User saved.");
     }
 
@@ -82,8 +86,24 @@ public class UserService {
         user.setUserFirstName(telegramUser.getFirstName());
         user.setUserLastName(telegramUser.getLastName());
         user.setUserName(telegramUser.getUserName());
-        user.setDatecreate(new Date());
+        user.setDateCreate(new Date());
         user.setPassDay(0);
+        save(user);
+        return user;
+    }
+
+    public User updateUserResultByCurrentDay(User user, UserResult userResult) {
+        Integer sysCurrentDay = propertiesService.getAsInteger(Properties.CURRENT_DAY);
+        String result = userResult.getAnswerCorrectAll() + "/" + userResult.getAnswerAll();
+        if (sysCurrentDay == 1 || user.getDayOneResult() != null) {
+            user.setDayOneResult(result);
+        } else if (sysCurrentDay == 2 || user.getDayTwoResult() != null) {
+            user.setDayTwoResult(result);
+        } else {
+            LOGGER.info("Данные не обновлены sysCurrentDay:{}, DayOneResult:{}, DayTwoResult:{}",
+                sysCurrentDay, user.getDayOneResult(), user.getDayTwoResult());
+        }
+        user.setPassDay(sysCurrentDay);
         save(user);
         return user;
     }

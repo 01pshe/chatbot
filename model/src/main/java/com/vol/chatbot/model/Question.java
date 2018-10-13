@@ -43,6 +43,10 @@ public class Question {
         return id;
     }
 
+    public Boolean checkResult(String userResult) {
+        return answerRight.equals(userResult);
+    }
+
     public String getQuestion() {
         return question;
     }
