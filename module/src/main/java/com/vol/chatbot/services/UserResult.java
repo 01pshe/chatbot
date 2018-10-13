@@ -69,6 +69,6 @@ public class UserResult {
         }else {
             total = "Жизнь прекрасна, не печальтесь!";
         }
-        return total;
+        return String.format(total, getPercentage());
     }
 }
