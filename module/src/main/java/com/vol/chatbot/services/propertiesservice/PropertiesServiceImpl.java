@@ -62,4 +62,12 @@ public class PropertiesServiceImpl implements PropertiesService, AutoCloseable {
             .map(Integer::valueOf)
             .orElse(Integer.valueOf(propertyName.getDefaultVal()));
     }
+
+    @Override
+    public Float getAsFloat(Properties propertyName) {
+        return Optional.ofNullable(properties.get(propertyName))
+            .map(Float::valueOf)
+            .orElse(Float.valueOf(propertyName.getDefaultVal()));
+    }
+
 }

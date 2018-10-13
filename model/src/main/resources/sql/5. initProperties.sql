@@ -8,10 +8,10 @@ INSERT INTO public.bot_properties (id, property_name, property_value)
 VALUES (nextval('hibernate_sequence'), 'REFRESH_QUESTION_TIME', '60');
 
 INSERT INTO public.bot_properties (id, property_name, property_value)
-VALUES (nextval('hibernate_sequence'), 'EXCELLENT_RESULT', '80');
+VALUES (nextval('hibernate_sequence'), 'RESULT_EXCELLENT_PCT', '80');
 
 INSERT INTO public.bot_properties (id, property_name, property_value)
-VALUES (nextval('hibernate_sequence'), 'GOOD_RESULT', '50');
+VALUES (nextval('hibernate_sequence'), 'RESULT_GOOD_PCT', '50');
 
 INSERT INTO public.bot_properties (id, property_name, property_value)
-VALUES (nextval('hibernate_sequence'), 'BAD_RESULT', '0');
+VALUES (nextval('hibernate_sequence'), 'RESULT_BAD_PCT', '0');
