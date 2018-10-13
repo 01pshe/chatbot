@@ -76,7 +76,7 @@ public class AnswerHelper {
             this.questionId = Long.valueOf(array[0]);
             this.userAnswer = array[1];
             this.questionDao.findById(this.questionId)
-                .ifPresent(q -> this.answer = answerDao.findAllByUserAndQuestion(this.user, q));
+                .ifPresent(q -> this.answer = answerDao.findAllByUserAndQuestionAndDayAnswer(this.user, q,this.sysCurrentDay));
 
         } catch (Exception e) {
             LOGGER.warn("Несмогли распарсить ответ: {}", callbackQuery.getData(), e);

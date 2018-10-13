@@ -13,7 +13,7 @@ public interface AnswerDao extends JpaRepository<Answer, Long> {
 
     List<Answer> findAllByUser(User user);
 
-    List<Answer> findAllByUserAndQuestion(User user, Question question);
+    List<Answer> findAllByUserAndQuestionAndDayAnswer(User user, Question question,Integer day);
 
     default List<Question> findQuestionAllByUserAndDayAnswer(User user,Integer day) {
         return findAllByUser(user).stream()

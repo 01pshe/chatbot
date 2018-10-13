@@ -11,9 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,17 +25,18 @@ public class QuestionService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuestionService.class);
     private List<Question> questions;
-    private Thread refresherThread;
+    private final Object lockObj = new Object();
+    private QuestionDao questionDao;
+    private PropertiesService propertiesService;
+    private long questionRefreshTime;
+
 
     @Autowired
     public QuestionService(QuestionDao questionDao, PropertiesService propertiesService) {
 
-        this.questions = questionDao.findQuestionByUseDay(propertiesService.getAsInteger(Properties.CURRENT_DAY));
-        QuestionRefresher refresher  = new QuestionRefresher(propertiesService,questionDao,questions);
-        refresher.setTps((propertiesService.getAsInteger(Properties.REFRESH_QUESTION_TIME)));
-        refresherThread = new Thread(refresher);
-        refresherThread.start();
-
+        this.questionRefreshTime = propertiesService.getAsInteger(Properties.REFRESH_QUESTION_TIME);
+        this.questionDao = questionDao;
+        this.propertiesService = propertiesService;
     }
 
     Question getQuestion(AnswerHelper helper) {
@@ -86,6 +91,24 @@ public class QuestionService {
             weight = QuestionWeight.DIFFICULT;
         }
         return weight;
+    }
+
+    private void refreshQuestions() {
+        try {
+            synchronized (lockObj) {
+                int sysCurrentDay = propertiesService.getAsInteger(Properties.CURRENT_DAY);
+                this.questions = questionDao.findQuestionByUseDay(sysCurrentDay);
+                LOGGER.info("Обновили список вопросов для текущего дня {}", sysCurrentDay);
+            }
+        } catch (Exception e) {
+            LOGGER.info("Ошибка обновления список вопросов для текущего дня.", e);
+        }
+    }
+
+    @PostConstruct
+    private void startScheduler() {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(this::refreshQuestions, 1, this.questionRefreshTime, TimeUnit.SECONDS);
     }
 
 }

@@ -95,9 +95,9 @@ public class UserService {
     public User updateUserResultByCurrentDay(User user, float pct) {
         Integer sysCurrentDay = propertiesService.getAsInteger(Properties.CURRENT_DAY);
         String result = String.valueOf(pct);
-        if (sysCurrentDay == 1 || user.getDayOneResult() != null) {
+        if (sysCurrentDay == 1 && user.getDayOneResult() == null) {
             user.setDayOneResult(result);
-        } else if (sysCurrentDay == 2 || user.getDayTwoResult() != null) {
+        } else if (sysCurrentDay == 2 && user.getDayTwoResult() == null) {
             user.setDayTwoResult(result);
         } else {
             LOGGER.info("Данные не обновлены sysCurrentDay:{}, DayOneResult:{}, DayTwoResult:{}",
