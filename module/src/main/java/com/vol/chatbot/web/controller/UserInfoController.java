@@ -1,7 +1,7 @@
 package com.vol.chatbot.web.controller;
 
 
-import com.vol.chatbot.services.UserInfoService;
+import com.vol.chatbot.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class UserInfoController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserInfoController.class);
-    private UserInfoService userInfoService;
+    private UserService userService;
 
     @Autowired
-    public UserInfoController(UserInfoService userInfoService) {
-        this.userInfoService = userInfoService;
+    public UserInfoController(UserService userInfoService) {
+        this.userService = userInfoService;
     }
 
     @RequestMapping("/")
@@ -32,7 +32,7 @@ public class UserInfoController {
     @RequestMapping("/users")
     public String listAll(Model model) {
         LOGGER.debug("redirect to user.jsp");
-        model.addAttribute("users", userInfoService.getAll());
+        model.addAttribute("users", userService.getAll());
         return "users";
     }
 }
