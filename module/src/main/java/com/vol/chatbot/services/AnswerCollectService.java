@@ -3,7 +3,6 @@ package com.vol.chatbot.services;
 import com.vol.chatbot.bot.BotService;
 import com.vol.chatbot.dao.AnswerDao;
 import com.vol.chatbot.dao.QuestionDao;
-import com.vol.chatbot.dao.UserDao;
 import com.vol.chatbot.keyboard.InlineKeyboard;
 import com.vol.chatbot.model.Answer;
 import com.vol.chatbot.model.Properties;
@@ -25,7 +24,6 @@ public class AnswerCollectService implements BotService {
     private QuestionService questionService;
     private AnswerDao answerDao;
     private QuestionDao questionDao;
-    private UserDao userDao;
     private UserService userService;
     private PropertiesService propertiesService;
 
@@ -33,12 +31,11 @@ public class AnswerCollectService implements BotService {
     public AnswerCollectService(QuestionService questionService,
                                 AnswerDao answerDao,
                                 QuestionDao questionDao,
-                                UserDao userDao,
-                                UserService userService, PropertiesService propertiesService) {
+                                UserService userService,
+                                PropertiesService propertiesService) {
         this.questionService = questionService;
         this.answerDao = answerDao;
         this.questionDao = questionDao;
-        this.userDao = userDao;
         this.userService = userService;
         this.propertiesService = propertiesService;
     }
@@ -53,15 +50,16 @@ public class AnswerCollectService implements BotService {
             answerDao,
             questionDao
         );
+        SendMessage sendMessage = null;
 
         // попытка ответить второй раз на вопрос
         if (answerHelper.isTwiceAnswered()) {
-            return null;
+            return sendMessage;
         }
 
         // пользователь завершил текущий день
         if (answerHelper.isEndCurrentDay()) {
-            return null;
+            return sendMessage;
         }
 
         // запишим ответ на вопрос если это отве
@@ -69,27 +67,22 @@ public class AnswerCollectService implements BotService {
             saveAnswerByUser(answerHelper);
         }
 
-
-
         // польльзователь ответил на все вопросов, отправим сообщение что спсибо за участие и завершим день
         if (answerHelper.isEndCurrentDayTest()) {
             UserResult currentResult = answerHelper.getUserResultByCurrentDay();
-            userService.updateUserResultByCurrentDay(user, currentResult);
-            SendMessage sendMessage = new SendMessage();
+            float pct = currentResult.getPercentage();
+            userService.updateUserResultByCurrentDay(user, pct);
 
+            String total = currentResult.getResultMessageByCurrentDay(propertiesService);
+
+            sendMessage = new SendMessage();
+            sendMessage.setText(String.format(total, pct));
 
             return sendMessage;
         }
 
-
-
-
-
-
-
         Question questionNew = questionService.getQuestion(answerHelper);
 
-        SendMessage sendMessage = null;
 
         if (questionNew != null) {
             sendMessage = InlineKeyboard.getKeyboard(questionNew);
@@ -100,6 +93,7 @@ public class AnswerCollectService implements BotService {
         return sendMessage;
 
     }
+
 
     private void saveAnswerByUser(AnswerHelper helper) {
         for (Answer answer : helper.getAnswer()) {

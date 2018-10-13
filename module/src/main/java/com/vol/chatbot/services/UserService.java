@@ -92,9 +92,9 @@ public class UserService {
         return user;
     }
 
-    public User updateUserResultByCurrentDay(User user, UserResult userResult) {
+    public User updateUserResultByCurrentDay(User user, float pct) {
         Integer sysCurrentDay = propertiesService.getAsInteger(Properties.CURRENT_DAY);
-        String result = userResult.getAnswerCorrectAll() + "/" + userResult.getAnswerAll();
+        String result = String.valueOf(pct);
         if (sysCurrentDay == 1 || user.getDayOneResult() != null) {
             user.setDayOneResult(result);
         } else if (sysCurrentDay == 2 || user.getDayTwoResult() != null) {

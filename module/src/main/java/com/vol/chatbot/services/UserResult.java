@@ -1,6 +1,8 @@
 package com.vol.chatbot.services;
 
+import com.vol.chatbot.model.Properties;
 import com.vol.chatbot.model.QuestionWeight;
+import com.vol.chatbot.services.propertiesservice.PropertiesService;
 
 public class UserResult {
 
@@ -48,11 +50,25 @@ public class UserResult {
         }
     }
 
-
-    public Double getPercent() {
-
-        return 0.0;
+    public float getPercentage() {
+        return points * 100f / Constants.POINTS_MAX;
     }
 
-
+    public String getResultMessageByCurrentDay(PropertiesService propertiesService) {
+        String total;
+        Properties prop = null;
+        if (this.getPercentage() >= propertiesService.getAsFloat(Properties.RESULT_EXCELLENT_PCT)) {
+            prop = Properties.EXCELLENT_RESULT;
+            total = prop.getDefaultVal();
+        }else if (this.getPercentage() >= propertiesService.getAsFloat(Properties.RESULT_GOOD_PCT)){
+            prop = Properties.GOOD_RESULT;
+            total = prop.getDefaultVal();
+        }else if (this.getPercentage() >= propertiesService.getAsFloat(Properties.RESULT_BAD_PCT)){
+            prop = Properties.BAD_RESULT;
+            total = prop.getDefaultVal();
+        }else {
+            total = "Жизнь прекрасна, не печальтесь!";
+        }
+        return total;
+    }
 }
