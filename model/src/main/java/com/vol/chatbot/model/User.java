@@ -9,7 +9,7 @@ import java.util.Date;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
@@ -28,14 +28,17 @@ public class User {
     @Column(name = "bot")
     private boolean bot;
 
-    @Column(name = "datecreate")
-    private Date datecreate;
+    @Column(name = "dateCreate")
+    private Date dateCreate;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
-    private UserInfo userInfo;
+    @Column(name = "pass_day")
+    private Integer passDay;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
-    private Scenario scenario;
+    @Column(name = "day_one_result")
+    private String dayOneResult;
+
+    @Column(name = "day_two_result")
+    private String dayTwoResult;
 
     public User() {
         // Do nothing
@@ -43,6 +46,14 @@ public class User {
 
     public Long getId() {
         return id;
+    }
+
+    public Integer getPassDay() {
+        return passDay;
+    }
+
+    public void setPassDay(Integer passDay) {
+        this.passDay = passDay;
     }
 
     public void setId(Long id) {
@@ -89,28 +100,28 @@ public class User {
         this.bot = bot;
     }
 
-    public Date getDatecreate() {
-        return datecreate;
+    public Date getDateCreate() {
+        return dateCreate;
     }
 
-    public void setDatecreate(Date datecreate) {
-        this.datecreate = datecreate;
+    public void setDateCreate(Date dateCreate) {
+        this.dateCreate = dateCreate;
     }
 
-    public UserInfo getUserInfo() {
-        return userInfo;
+    public String getDayOneResult() {
+        return dayOneResult;
     }
 
-    public void setUserInfo(UserInfo userInfo) {
-        this.userInfo = userInfo;
+    public void setDayOneResult(String dayOneResult) {
+        this.dayOneResult = dayOneResult;
     }
 
-    public Scenario getScenario() {
-        return scenario;
+    public String getDayTwoResult() {
+        return dayTwoResult;
     }
 
-    public void setScenario(Scenario scenario) {
-        this.scenario = scenario;
+    public void setDayTwoResult(String dayTwoResult) {
+        this.dayTwoResult = dayTwoResult;
     }
 
     @Override
@@ -122,9 +133,7 @@ public class User {
             ", userLastName='" + userLastName + '\'' +
             ", userName='" + userName + '\'' +
             ", bot=" + bot +
-            ", datecreate=" + datecreate +
-            ", userInfo=" + userInfo +
-            ", scenario=" + scenario +
+            ", dateCreate=" + dateCreate +
             '}';
     }
 

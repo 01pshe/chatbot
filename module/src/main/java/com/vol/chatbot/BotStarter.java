@@ -35,4 +35,5 @@ public class BotStarter implements CommandLineRunner {
         //Comment this before make deploy on remote  --- End ----
         botsApi.registerBot(bot);
     }
+
 }

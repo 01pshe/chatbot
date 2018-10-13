@@ -8,7 +8,7 @@ import org.hibernate.tool.schema.TargetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -16,7 +16,7 @@ import java.util.List;
 
 public class HibernateExporter {
     private static final Logger LOGGER = LoggerFactory.getLogger(HibernateExporter.class);
-    private static final String CANT_GET_CLASS_LOADER="Can't get class loader.";
+    private static final String CANT_GET_CLASS_LOADER = "Can't get class loader.";
 
     private String dialect;
     private String entityPackage;
@@ -35,7 +35,7 @@ public class HibernateExporter {
             directory = new File(resource.getFile());
         } catch (NullPointerException ex) {
             LOGGER.warn("error", ex);
-            throw new ClassNotFoundException(packageName + " (" + directory + ") does not appear to be a valid package", ex);
+            throw new ClassNotFoundException(packageName + " does not appear to be a valid package", ex);
         }
         return collectClasses(packageName, directory);
     }
