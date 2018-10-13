@@ -25,23 +25,15 @@
     <div class="table-responsive">
         <table class="table table-striped table-bordered">
             <tr>
-                <th>Name:</th>
-                <th>Surname:</th>
-                <th>Middlename:</th>
-                <th>Position:</th>
-                <th>Company:</th>
-                <th>Phone Number:</th>
-                <th>email:</th>
+                <th>userFirstName:</th>
+                <th>userLastName:</th>
+                <th>userName:</th>
             </tr>
             <c:forEach items="${users}" var="user">
                 <tr>
-                    <td>${user.name}</td>
-                    <td>${user.surname}</td>
-                    <td>${user.middleName}</td>
-                    <td>${user.position}</td>
-                    <td>${user.company}</td>
-                    <td>${user.phoneNumber}</td>
-                    <td>${user.email}</td>
+                    <td>${user.userFirstName}</td>
+                    <td>${user.userLastName}</td>
+                    <td>${user.userName}</td>
                 </tr>
             </c:forEach>
         </table>
