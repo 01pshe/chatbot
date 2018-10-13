@@ -11,4 +11,7 @@ public interface PropertiesService {
     Long getAsLong(Properties propertyName);
 
     Integer getAsInteger(Properties propertyName);
+
+    Float getAsFloat(Properties propertyName);
+
 }

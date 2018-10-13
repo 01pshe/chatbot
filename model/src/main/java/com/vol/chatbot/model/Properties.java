@@ -8,9 +8,12 @@ public enum Properties {
     SUSPEND_MODE("false"),
     CURRENT_DAY("1"),
     REFRESH_QUESTION_TIME("60"),
+    RESULT_EXCELLENT_PCT("80"),
+    RESULT_GOOD_PCT("50"),
+    RESULT_BAD_PCT("0"),
     EXCELLENT_RESULT("Молодец\uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n" +
         "\n" +
-        " ✅ Твой результат - %s \n" +
+        " ✅ Твой результат - %.2f процентов!\n" +
         "\n" +
         "Приходи на стенд СберТеха, покажи свой результат и получи приз. \uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n" +
         "\n" +
@@ -18,12 +21,12 @@ public enum Properties {
         "Розыгрыш пройдёт на стенде СберТеха 20 октября в 17:10!"),
     GOOD_RESULT("Молодец\uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n" +
         "\n" +
-        " ✅ Твой результат - %s\n" +
+        " ✅ Твой результат - %.2f процентов!\n" +
         "\n" +
         "Приходи на стенд СберТеха, покажи свой результат и получи приз.\uD83C\uDF81\uD83C\uDF81\uD83C\uDF81"),
     BAD_RESULT("Молодец\uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n"+
         "\n" +
-        " ✅ Твой результат - %s\n" +
+        " ✅ Твой результат - %.2f процентов!\n" +
         "\n" +
         "Спасибо что принял участие в нашем тесте! \uD83D\uDE09"),
     SUSPEND_TEXT("На сегодня тестирование окончено, \n" +
