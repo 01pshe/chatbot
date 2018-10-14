@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 
@@ -106,5 +107,9 @@ public class UserService {
         user.setPassDay(sysCurrentDay);
         save(user);
         return user;
+    }
+
+    public List<User> getAll() {
+        return userDao.findAll();
     }
 }
