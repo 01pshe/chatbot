@@ -1,10 +1,10 @@
 package com.vol.chatbot.services;
 
 public class Constants {
-    public static final int DAY_QUESTION_CNT = 3;
+    public static final int DAY_QUESTION_CNT = 5;
     public static final int DIFFICULT_QUESTION_CNT = 1;
-    public static final int MEDIUM_QUESTION_CNT = 1;
-    public static final int EASY_QUESTION_CNT = 1;
+    public static final int MEDIUM_QUESTION_CNT = 2;
+    public static final int EASY_QUESTION_CNT = 2;
 
     public static final int DIFFICULT_POINT = 3;
     public static final int MEDIUM_POINT = 2;
