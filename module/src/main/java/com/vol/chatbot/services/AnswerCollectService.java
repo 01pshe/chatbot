@@ -52,10 +52,17 @@ public class AnswerCollectService implements BotService {
         );
         SendMessage sendMessage = null;
 
+        // попытка ответить на другой вопрос
+        if (answerHelper.isCallback() && !answerHelper.isExpectedAnswer()) {
+            return sendMessage;
+        }
+
+
         // попытка ответить второй раз на вопрос
         if (answerHelper.isTwiceAnswered()) {
             return sendMessage;
         }
+
 
         // пользователь завершил текущий день
         if (answerHelper.isEndCurrentDay()) {
@@ -94,12 +101,13 @@ public class AnswerCollectService implements BotService {
 
 
     private void saveAnswerByUser(AnswerHelper helper) {
-        for (Answer answer : helper.getAnswer()) {
-            if (answer.getUserAnswer() == null) {
+        helper.getExpectedAnswers().stream()
+            .filter(answer -> answer.getUserAnswer() == null && answer.getQuestion() != null &&
+                answer.getQuestion().getId().equals(helper.getQuestionId()))
+            .forEach(answer -> {
                 answer.setUserAnswer(helper.getUserAnswer());
                 answerDao.saveAndFlush(answer);
-            }
-        }
+            });
     }
 
     private void saveQuestionByUser(User user, Question question) {

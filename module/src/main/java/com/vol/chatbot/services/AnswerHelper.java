@@ -24,10 +24,14 @@ public class AnswerHelper {
     private AnswerDao answerDao;
     private QuestionDao questionDao;
 
+    // Вопросы которые уже задовали
     private List<Question> passedQuestions;
 
-    // Последний заддонный вопрос
-    private List<Answer> answer = new ArrayList<>();
+    // Вопросы которые ждут ответа
+    private List<Answer> expectedAnswers = new ArrayList<>();
+
+    // пришел ожидаемый вопрос
+    private boolean isExpectedAnswer = false;
 
     public AnswerHelper(User user, int sysCurrentDay, Update update, AnswerDao answerDao, QuestionDao questionDao) {
         this.user = user;
@@ -52,7 +56,7 @@ public class AnswerHelper {
     }
 
     public Boolean isTwiceAnswered() {
-        return this.answer.stream().anyMatch(a -> a.getUserAnswer() != null);
+        return this.expectedAnswers.stream().anyMatch(a -> a.getUserAnswer() != null);
     }
 
     public UserResult getUserResultByCurrentDay() {
@@ -75,8 +79,11 @@ public class AnswerHelper {
             String[] array = callbackQuery.getData().split(";");
             this.questionId = Long.valueOf(array[0]);
             this.userAnswer = array[1];
-            this.questionDao.findById(this.questionId)
-                .ifPresent(q -> this.answer = answerDao.findAllByUserAndQuestionAndDayAnswer(this.user, q,this.sysCurrentDay));
+            this.expectedAnswers = answerDao.findAllByUserAndUserAnswerAndDayAnswer(this.user, null, this.sysCurrentDay);
+            if (this.expectedAnswers.size() == 1 && this.expectedAnswers.get(0).getQuestion() != null &&
+                this.expectedAnswers.get(0).getQuestion().getId().equals(this.questionId)) {
+                this.isExpectedAnswer = true;
+            }
 
         } catch (Exception e) {
             LOGGER.warn("Несмогли распарсить ответ: {}", callbackQuery.getData(), e);
@@ -87,8 +94,8 @@ public class AnswerHelper {
         return passedQuestions;
     }
 
-    public List<Answer> getAnswer() {
-        return answer;
+    public List<Answer> getExpectedAnswers() {
+        return expectedAnswers;
     }
 
     public String getUserAnswer() {
@@ -103,4 +110,15 @@ public class AnswerHelper {
         return sysCurrentDay;
     }
 
+    public boolean isExpectedAnswer() {
+        return this.isExpectedAnswer;
+    }
+
+    public Long getQuestionId() {
+        return questionId;
+    }
+
+    public Boolean isCallback() {
+        return isCallback;
+    }
 }
