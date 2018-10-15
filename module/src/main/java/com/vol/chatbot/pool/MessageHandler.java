@@ -2,7 +2,6 @@ package com.vol.chatbot.pool;
 
 import com.vol.chatbot.bot.BotService;
 import com.vol.chatbot.model.Properties;
-import com.vol.chatbot.model.Question;
 import com.vol.chatbot.model.User;
 import com.vol.chatbot.queue.QueueService;
 import com.vol.chatbot.services.UserService;
@@ -13,7 +12,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.RecursiveAction;
 
@@ -27,6 +25,7 @@ public class MessageHandler extends RecursiveAction {
     private PropertiesService propertiesService;
     private UserService userService;
     private Update update;
+    private ClassLoader classLoader;
 
 
     public MessageHandler(Update update,
@@ -34,18 +33,22 @@ public class MessageHandler extends RecursiveAction {
                           BotService answerCollectService,
                           BotService commandProcessor,
                           PropertiesService propertiesService,
-                          UserService userService) {
+                          UserService userService,
+                          ClassLoader classLoader) {
         this.queueService = queueService;
         this.answerCollectService = answerCollectService;
         this.commandProcessor = commandProcessor;
         this.propertiesService = propertiesService;
         this.userService = userService;
         this.update = update;
+        this.classLoader = classLoader;
     }
 
     @Override
     protected void compute() {
-
+        Thread thisThread = Thread.currentThread();
+        ClassLoader oldClassLoader = thisThread.getContextClassLoader();
+        thisThread.setContextClassLoader(classLoader);
         SendMessage sendMessage;
         if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
             User user = userService.getUser(update);
@@ -64,8 +67,9 @@ public class MessageHandler extends RecursiveAction {
             sendMessage.setChatId(chatId);
             queueService.add(sendMessage);
         } else {
-            LOGGER.info("Пустоее сообение не отпровляем!!!");
+            LOGGER.info("Пустое сообение не отправляем!!!");
         }
+        thisThread.setContextClassLoader(oldClassLoader);
 
     }
 

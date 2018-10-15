@@ -11,11 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.Optional;
 
 
 @Component
@@ -58,42 +56,20 @@ public class Bot extends TelegramLongPollingBot {
         this.botToken = botToken;
     }
 
-    private boolean isCommand(Update update){
-        String msgText = Optional.ofNullable(update.getMessage()).map(Message::getText).orElse("");
-        return msgText.length() > 0 && msgText.startsWith("/");
-    }
-
     @Override
     public void onUpdateReceived(Update update) {
+        Thread thisThread = Thread.currentThread();
+        ClassLoader currentClassLoader = thisThread.getContextClassLoader();
         MessageHandler messageHandler = new MessageHandler(update, this.queueService,
             this.answerCollectService,
             this.commandProcessor,
             this.propertiesService,
-            this.userService
+            this.userService,
+            currentClassLoader
         );
 
         processing.execute(messageHandler);
 
-//        SendMessage sendMessage ;
-//        if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
-//            User user = userService.getUser(update);
-//            if (isCommand(update)) {
-//                sendMessage = commandProcessor.createResponse(user,update);
-//            } else {
-//                sendMessage = answerCollectService.createResponse(user, update);
-//            }
-//        } else {
-//            sendMessage = new SendMessage();
-//            sendMessage.setText(propertiesService.getAsString(Properties.SUSPEND_TEXT));
-//        }
-//
-//        if (sendMessage != null) {
-//            Long chatId = getChadId(update);
-//            sendMessage.setChatId(chatId);
-//            queueService.add(sendMessage);
-//        } else {
-//            LOGGER.info("Пустоее сообение не отпровляем!!!");
-//        }
     }
 
     @Override
@@ -104,17 +80,6 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return this.botToken;
-    }
-
-
-    private Long getChadId(Update update) {
-        Long chadId;
-        if (update.hasCallbackQuery()) {
-            chadId = update.getCallbackQuery().getMessage().getChatId();
-        } else {
-            chadId = update.getMessage().getChatId();
-        }
-        return chadId;
     }
 
 }
