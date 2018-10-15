@@ -64,7 +64,7 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        SendMessage sendMessage ;
+        SendMessage sendMessage;
         if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
             User user = userService.getUser(update);
             if (isCommand(update)) {
@@ -80,9 +80,10 @@ public class Bot extends TelegramLongPollingBot {
         if (sendMessage != null) {
             Long chatId = getChadId(update);
             sendMessage.setChatId(chatId);
+            sendMessage.enableMarkdown(true);
             queueService.add(sendMessage);
         } else {
-            LOGGER.info("Пустоее сообение не отпровляем!!!");
+            LOGGER.info("Пустоее сообщение не отправляем!!!");
         }
     }
 

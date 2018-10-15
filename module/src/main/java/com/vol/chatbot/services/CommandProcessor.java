@@ -26,6 +26,7 @@ public class CommandProcessor implements BotService {
 
 
     public enum Command {
+        START,
         PROPERTY,
         UNSUPPORTED
     }
@@ -70,6 +71,9 @@ public class CommandProcessor implements BotService {
                 } else {
                     answer.setText("Указанной настройки не существует.");
                 }
+                break;
+            case START:
+                answer.setText(propertiesService.getAsString(Properties.WELCOME_TEXT));
                 break;
             default:
                 answer.setText("Команда не поддерживается.");
