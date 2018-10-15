@@ -24,6 +24,6 @@ public interface AnswerDao extends JpaRepository<Answer, Long> {
             .collect(Collectors.toList());
     }
 
-    Stream<Answer> findByUserAndDayAnswer(User user, Integer day);
+    Stream<Answer> findAllByUserAndDayAnswer(User user, Integer day);
 
 }
