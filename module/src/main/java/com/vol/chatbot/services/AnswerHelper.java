@@ -145,7 +145,4 @@ public class AnswerHelper {
         return String.valueOf(question.checkResult(this.userAnswer));
     }
 
-    public boolean isAsked() {
-        return false;
-    }
 }
