@@ -66,7 +66,7 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         SendMessage sendMessage ;
         if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
-            User user = userService.getUser(update);
+            User user = userService.getUser(update, getChatId(update));
             if (isCommand(update)) {
                 sendMessage = commandProcessor.createResponse(user,update);
             } else {
@@ -78,7 +78,7 @@ public class Bot extends TelegramLongPollingBot {
         }
 
         if (sendMessage != null) {
-            Long chatId = getChadId(update);
+            Long chatId = getChatId(update);
             sendMessage.setChatId(chatId);
             queueService.add(sendMessage);
         } else {
@@ -97,7 +97,7 @@ public class Bot extends TelegramLongPollingBot {
     }
 
 
-    private Long getChadId(Update update) {
+    private Long getChatId(Update update) {
         Long chadId;
         if (update.hasCallbackQuery()) {
             chadId = update.getCallbackQuery().getMessage().getChatId();
