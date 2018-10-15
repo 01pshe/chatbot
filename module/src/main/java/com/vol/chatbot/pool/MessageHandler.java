@@ -49,25 +49,30 @@ public class MessageHandler extends RecursiveAction {
         Thread thisThread = Thread.currentThread();
         ClassLoader oldClassLoader = thisThread.getContextClassLoader();
         thisThread.setContextClassLoader(classLoader);
-        SendMessage sendMessage;
-        if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
-            User user = userService.getUser(update);
-            if (isCommand(update)) {
-                sendMessage = commandProcessor.createResponse(user, update);
-            } else {
-                sendMessage = answerCollectService.createResponse(user, update);
-            }
-        } else {
-            sendMessage = new SendMessage();
-            sendMessage.setText(propertiesService.getAsString(Properties.SUSPEND_TEXT));
-        }
 
-        if (sendMessage != null) {
-            Long chatId = getChadId(update);
-            sendMessage.setChatId(chatId);
-            queueService.add(sendMessage);
-        } else {
-            LOGGER.info("Пустое сообение не отправляем!!!");
+        try {
+            SendMessage sendMessage;
+            if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
+                User user = userService.getUser(update,getChadId(update));
+                if (isCommand(update)) {
+                    sendMessage = commandProcessor.createResponse(user, update);
+                } else {
+                    sendMessage = answerCollectService.createResponse(user, update);
+                }
+            } else {
+                sendMessage = new SendMessage();
+                sendMessage.setText(propertiesService.getAsString(Properties.SUSPEND_TEXT));
+            }
+
+            if (sendMessage != null) {
+                Long chatId = getChadId(update);
+                sendMessage.setChatId(chatId);
+                queueService.add(sendMessage);
+            } else {
+                LOGGER.info("Пустое сообение не отправляем!!!");
+            }
+        } catch (Exception e) {
+            LOGGER.warn(String.format("Сообщение не отправлено: %s", e.getMessage()));
         }
         thisThread.setContextClassLoader(oldClassLoader);
 

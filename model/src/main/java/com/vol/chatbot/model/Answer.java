@@ -1,6 +1,7 @@
 package com.vol.chatbot.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "bot_answer")
@@ -16,6 +17,15 @@ public class Answer {
 
     @Column(name = "day_answer")
     private Integer dayAnswer;
+
+    @Column(name = "result")
+    private String result;
+
+    @Column(name = "dateUserAnswer")
+    private Date dateUserAnswer;
+
+    @Column(name = "dateCreate")
+    private Date dateCreate;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -59,5 +69,29 @@ public class Answer {
 
     public void setDayAnswer(Integer dayAnswer) {
         this.dayAnswer = dayAnswer;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public Date getDateUserAnswer() {
+        return dateUserAnswer;
+    }
+
+    public void setDateUserAnswer(Date dateUserAnswer) {
+        this.dateUserAnswer = dateUserAnswer;
+    }
+
+    public Date getDateCreate() {
+        return dateCreate;
+    }
+
+    public void setDateCreate(Date dateCreate) {
+        this.dateCreate = dateCreate;
     }
 }

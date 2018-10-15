@@ -9,17 +9,20 @@ import com.vol.chatbot.model.Properties;
 import com.vol.chatbot.model.Question;
 import com.vol.chatbot.model.User;
 import com.vol.chatbot.services.propertiesservice.PropertiesService;
+import org.hibernate.HibernateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.LockModeType;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class AnswerCollectService implements BotService {
@@ -30,9 +33,7 @@ public class AnswerCollectService implements BotService {
     private QuestionDao questionDao;
     private UserService userService;
     private PropertiesService propertiesService;
-    private LocalContainerEntityManagerFactoryBean entityManagerFactory;
-    private EntityManagerFactory emf;
-    private JpaTransactionManager transactionManager;
+    private EntityManagerFactory entityManagerFactory;
 
     @Autowired
     public AnswerCollectService(QuestionService questionService,
@@ -40,79 +41,81 @@ public class AnswerCollectService implements BotService {
                                 QuestionDao questionDao,
                                 UserService userService,
                                 PropertiesService propertiesService,
-                                LocalContainerEntityManagerFactoryBean entityManagerFactory,
-                                EntityManagerFactory emf,
-                                JpaTransactionManager transactionManager) {
+                                EntityManagerFactory entityManagerFactory) {
         this.questionService = questionService;
         this.answerDao = answerDao;
         this.questionDao = questionDao;
         this.userService = userService;
         this.propertiesService = propertiesService;
         this.entityManagerFactory = entityManagerFactory;
-        this.emf = emf;
-        this.transactionManager = transactionManager;
     }
 
-
     @Override
-    public synchronized SendMessage createResponse(User user, Update update) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction();
+    public SendMessage createResponse(User user, Update update) {
 
+        EntityManager entityManager = this.entityManagerFactory.createEntityManager();
+        try {
+            AnswerHelper answerHelper = new AnswerHelper(user,
+                propertiesService.getAsInteger(Properties.CURRENT_DAY),
+                update,
+                answerDao,
+                questionDao,
+                entityManager
+            );
+            SendMessage sendMessage = null;
 
+            // попытка ответить на другой вопрос
+            if (answerHelper.isCallback() && !answerHelper.isExpectedAnswer()) {
+                return sendMessage;
+            }
 
-        AnswerHelper answerHelper = new AnswerHelper(user,
-            propertiesService.getAsInteger(Properties.CURRENT_DAY),
-            update,
-            answerDao,
-            questionDao
-        );
-        SendMessage sendMessage = null;
+            // попытка ответить второй раз на вопрос
+            if (answerHelper.isCallback() && answerHelper.isTwiceAnswered()) {
+                return sendMessage;
+            }
 
-        // попытка ответить на другой вопрос
-        if (answerHelper.isCallback() && !answerHelper.isExpectedAnswer()) {
+            // пользователь завершил текущий день
+            if (answerHelper.isCallback() && answerHelper.isEndCurrentDay()) {
+                return sendMessage;
+            }
+
+            // запишим ответ на вопрос если это отве
+            if (answerHelper.isCallback()) {
+                saveAnswerByUser(answerHelper);
+            }
+
+            // польльзователь ответил на все вопросов, отправим сообщение что спсибо за участие и завершим день
+            if (answerHelper.isEndCurrentDayTest()) {
+                UserResult currentResult = answerHelper.getUserResultByCurrentDay();
+
+                userService.updateUserResultByCurrentDay(user, currentResult.getPercentage());
+
+                sendMessage = new SendMessage();
+                sendMessage.setText(currentResult.getResultMessageByCurrentDay(propertiesService));
+
+                return sendMessage;
+            }
+
+            Question questionNew = null;
+
+            // если вопрос не задовали, то задодим
+            if ((!answerHelper.isCallback() && answerHelper.getPassedQuestions().isEmpty()) || answerHelper.isCallback()) {
+                questionNew = questionService.getQuestion(answerHelper);
+            }
+
+            if (questionNew != null) {
+                sendMessage = InlineKeyboard.getKeyboard(questionNew);
+                sendMessage.setText(questionNew.getQuestion());
+                saveQuestionByUser(user, questionNew);
+            }
+
             return sendMessage;
+
+        } finally {
+            if (entityManager != null) {
+                entityManager.close();
+            }
         }
-
-
-        // попытка ответить второй раз на вопрос
-        if (answerHelper.isTwiceAnswered()) {
-            return sendMessage;
-        }
-
-
-        // пользователь завершил текущий день
-        if (answerHelper.isEndCurrentDay()) {
-            return sendMessage;
-        }
-
-        // запишим ответ на вопрос если это отве
-        if (update.hasCallbackQuery()) {
-            saveAnswerByUser(answerHelper);
-        }
-
-        // польльзователь ответил на все вопросов, отправим сообщение что спсибо за участие и завершим день
-        if (answerHelper.isEndCurrentDayTest()) {
-            UserResult currentResult = answerHelper.getUserResultByCurrentDay();
-
-            userService.updateUserResultByCurrentDay(user, currentResult.getPercentage());
-
-            sendMessage = new SendMessage();
-            sendMessage.setText(currentResult.getResultMessageByCurrentDay(propertiesService));
-
-            return sendMessage;
-        }
-
-        Question questionNew = questionService.getQuestion(answerHelper);
-
-
-        if (questionNew != null) {
-            sendMessage = InlineKeyboard.getKeyboard(questionNew);
-            sendMessage.setText(questionNew.getQuestion());
-            saveQuestionByUser(user, questionNew);
-        }
-
-        return sendMessage;
 
     }
 
@@ -121,18 +124,64 @@ public class AnswerCollectService implements BotService {
             .filter(answer -> answer.getUserAnswer() == null && answer.getQuestion() != null &&
                 answer.getQuestion().getId().equals(helper.getQuestionId()))
             .forEach(answer -> {
-                answer.setUserAnswer(helper.getUserAnswer());
-                answerDao.saveAndFlush(answer);
+                EntityManager entityManager = this.entityManagerFactory.createEntityManager();
+                EntityTransaction transaction = entityManager.getTransaction();
+
+                try {
+                    transaction.begin();
+                    Answer answerForUpdate = entityManager.find(Answer.class, answer.getId(), LockModeType.PESSIMISTIC_WRITE);
+                    if (answerForUpdate.getUserAnswer() == null) {
+                        answerForUpdate.setUserAnswer(helper.getUserAnswer());
+                        answerForUpdate.setResult(helper.getCurrentResult());
+                        answerForUpdate.setDateUserAnswer(new Date());
+                        entityManager.merge(answerForUpdate);
+                        entityManager.flush();
+                        transaction.commit();
+                    } else {
+                        throw new HibernateException("Запись уже обновлена ранее, имя потока: " + Thread.currentThread().getName());
+                    }
+                } catch (Exception e) {
+                    transaction.rollback();
+                    throw e;
+                } finally {
+                    entityManager.close();
+                }
+
             });
     }
 
     private void saveQuestionByUser(User user, Question question) {
-        Answer answer = new Answer();
-        answer.setUser(user);
-        answer.setQuestion(question);
-        answer.setDayAnswer(propertiesService.getAsInteger(Properties.CURRENT_DAY));
-        answerDao.saveAndFlush(answer);
-        LOGGER.info("Пользователю {}, задали вопрос {}", user, question);
+        EntityManager entityManager = this.entityManagerFactory.createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+
+        try {
+            transaction.begin();
+            List list = entityManager.createNativeQuery("select * from bot_answer a where a.user_id = :userId and a.day_answer = :dayAnswer and a.question_id = :questionId", Answer.class)
+                .setParameter("userId", user.getId())
+                .setParameter("dayAnswer", propertiesService.getAsInteger(Properties.CURRENT_DAY))
+                .setParameter("questionId", question.getId())
+                .getResultList();
+
+            if (list.isEmpty()) {
+                Answer answer = new Answer();
+                answer.setUser(user);
+                answer.setQuestion(question);
+                answer.setDayAnswer(propertiesService.getAsInteger(Properties.CURRENT_DAY));
+                answer.setDateCreate(new Date());
+                entityManager.persist(answer);
+                entityManager.flush();
+                transaction.commit();
+                LOGGER.info("Пользователю {}, задали вопрос {}", user, question);
+            } else {
+                throw new HibernateException("Запись уже добавлена ранее, имя потока: " + Thread.currentThread().getName());
+            }
+        } catch (Exception e) {
+            transaction.rollback();
+            throw e;
+        } finally {
+            entityManager.close();
+        }
+
     }
 
 }

@@ -16,17 +16,17 @@ VALUES (nextval('hibernate_sequence'), 'LongConsumer', 'LongFunction<R>', 'LongP
 
 INSERT INTO public.bot_question (id, answera, answerb, answerc, answerd, answerr, answerright, question, useday, weight)
 VALUES (nextval('hibernate_sequence'), 'false', 'true', '', '', 'B', 'true',
-        'A method reference is described using :: (double colon) symbol.', 1, 'EASY');
+        'A method reference is described using :: (double colon) symbol.', 2, 'EASY');
 
 INSERT INTO public.bot_question (id, answera, answerb, answerc, answerd, answerr, answerright, question, useday, weight)
 VALUES (nextval('hibernate_sequence'), 'false', 'true', '', '', 'B', 'true',
-        'Stream operations do the iterations internally over the source elements provided.', 1, 'EASY');
+        'Stream operations do the iterations internally over the source elements provided.', 2, 'EASY');
 
 INSERT INTO public.bot_question (id, answera, answerb, answerc, answerd, answerr, answerright, question, useday, weight)
 VALUES (nextval('hibernate_sequence'), 'ToDoubleBiFunction<T,U>', 'ToDoubleFunction<T>', 'ToIntBiFunction<T,U>',
         'ToIntFunction<T>', 'A', 'ToDoubleBiFunction<T,U>',
         'Which of the following functional interface represents a function that accepts two arguments and produces a double-valued result?',
-        1, 'MEDIUM');
+        2, 'MEDIUM');
 
 INSERT INTO public.bot_question (id, answera, answerb, answerc, answerd, answerr, answerright, question, useday, weight)
 VALUES (nextval('hibernate_sequence'), '(int a, int b) -> a + b;', '(a, b) -> a + b', 'Both of the above.',
@@ -38,7 +38,7 @@ INSERT INTO public.bot_question (id, answera, answerb, answerc, answerd, answerr
 VALUES (nextval('hibernate_sequence'), 'getDecoder()', 'getEncoder()', 'getMimeDecoder()', 'getMimeEncoder', 'C',
         'getMimeDecoder()',
         'Which of the following method of Base64 class returns a Base64.Decoder that decodes using the MIME type base64 decoding scheme?',
-        1, 'MEDIUM');
+        2, 'MEDIUM');
 
 INSERT INTO public.bot_question (id, answera, answerb, answerc, answerd, answerr, answerright, question, useday, weight)
 VALUES (nextval('hibernate_sequence'), 'false', 'true', '', '', 'B', 'true',
@@ -64,7 +64,7 @@ public class Overload{
   }
 }
 
-Результатом его компиляции и выполнения будет:', 1, 'DIFFICULT');
+Результатом его компиляции и выполнения будет:', 2, 'DIFFICULT');
 
 INSERT INTO public.bot_question (id, answera, answerb, answerc, answerd, answerr, answerright, question, useday, weight)
 VALUES (nextval('hibernate_sequence'), 'true true', 'false false', 'true false', 'false true', 'G', 'true false', 'Integer a = 120;
@@ -74,4 +74,4 @@ Integer d = 130;
 System.out.println(a==b);
 System.out.println(c==d);
 
-В результате выполнения данного кода будет выведено:', 2, 'EASY');
+В результате выполнения данного кода будет выведено:', 1, 'MEDIUM');
