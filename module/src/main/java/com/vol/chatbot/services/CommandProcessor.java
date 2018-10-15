@@ -1,8 +1,10 @@
 package com.vol.chatbot.services;
 
 import com.vol.chatbot.bot.BotService;
+import com.vol.chatbot.messagesender.MessageSender;
 import com.vol.chatbot.model.Properties;
 import com.vol.chatbot.model.User;
+import com.vol.chatbot.queue.QueueService;
 import com.vol.chatbot.services.propertiesservice.PropertiesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,21 +13,36 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 @Service
 @Qualifier("commandProcessor")
 public class CommandProcessor implements BotService {
 
     private PropertiesService propertiesService;
+    private MessageSender messageSender;
+    private QueueService queueService;
+    private BotService answerCollectService;
+
+
 
     @Autowired
-    public CommandProcessor(PropertiesService propertiesService) {
+    public CommandProcessor(@Qualifier("answerCollectService") BotService answerCollectService,
+        PropertiesService propertiesService,
+                            MessageSender messageSender, QueueService queueService) {
         this.propertiesService = propertiesService;
+        this.messageSender = messageSender;
+        this.queueService = queueService;
+        this.answerCollectService = answerCollectService;
     }
 
 
     public enum Command {
+        START,
+        SEND_MESSAGE_TO_ALL,
+        SEND_MESSAGE_BY_NAMES,
         PROPERTY,
         UNSUPPORTED
     }
@@ -44,7 +61,7 @@ public class CommandProcessor implements BotService {
         }
         Command command = getCommandFromString(stringCommand);
 
-        return processCommand(command, args);
+        return processCommand(command, args, update, user);
 
     }
 
@@ -60,7 +77,7 @@ public class CommandProcessor implements BotService {
         return command;
     }
 
-    private SendMessage processCommand(Command command, String args) {
+    private SendMessage processCommand(Command command, String args, Update update, User user) {
         SendMessage answer = new SendMessage();
         switch (command) {
             case PROPERTY:
@@ -70,6 +87,25 @@ public class CommandProcessor implements BotService {
                 } else {
                     answer.setText("Указанной настройки не существует.");
                 }
+                break;
+            case SEND_MESSAGE_TO_ALL:
+                messageSender.sendAll(args);
+                answer.setText("message was sent");
+                break;
+            case SEND_MESSAGE_BY_NAMES:
+                String text = args.substring(0,args.indexOf(';'));
+                String namesString = args.substring(text.length());
+                Set<String> names = new HashSet<>(Arrays.asList(namesString.split(",")));
+                messageSender.sendAllByNic(text,names);
+                answer.setText("message was sent");
+                break;
+            case START:
+                SendMessage message = new SendMessage();
+                message.enableMarkdown(true);
+                message.setChatId(update.getMessage().getChatId());
+                message.setText(propertiesService.getAsString(Properties.WELCOME_TEXT));
+                queueService.add(message);
+                answer = answerCollectService.createResponse(user, update);
                 break;
             default:
                 answer.setText("Команда не поддерживается.");
