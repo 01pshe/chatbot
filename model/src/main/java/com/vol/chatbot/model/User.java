@@ -40,6 +40,9 @@ public class User {
     @Column(name = "day_two_result")
     private String dayTwoResult;
 
+    @Column(name = "chat_id")
+    private Long chatId;
+
     public User() {
         // Do nothing
     }
@@ -124,6 +127,14 @@ public class User {
         this.dayTwoResult = dayTwoResult;
     }
 
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -134,6 +145,7 @@ public class User {
             ", userName='" + userName + '\'' +
             ", bot=" + bot +
             ", dateCreate=" + dateCreate +
+            ", chatId=" + chatId +
             '}';
     }
 
