@@ -1,7 +1,7 @@
 package com.vol.chatbot.bot;
 
-import com.vol.chatbot.model.Properties;
-import com.vol.chatbot.model.User;
+import com.vol.chatbot.pool.MessageHandler;
+import com.vol.chatbot.pool.MessageProcessing;
 import com.vol.chatbot.queue.QueueService;
 import com.vol.chatbot.services.UserService;
 import com.vol.chatbot.services.propertiesservice.PropertiesService;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -24,6 +23,7 @@ public class Bot extends TelegramLongPollingBot {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Bot.class);
 
+    private MessageProcessing processing;
     private QueueService queueService;
     private String botToken;
     private BotService answerCollectService;
@@ -32,11 +32,12 @@ public class Bot extends TelegramLongPollingBot {
     private UserService userService;
 
     @Autowired
-    public Bot(@Qualifier("answerCollectService") BotService answerCollectService,
+    public Bot(MessageProcessing processing, @Qualifier("answerCollectService") BotService answerCollectService,
                @Qualifier("commandProcessor") BotService commandProcessor,
                QueueService queueService,
                PropertiesService propertiesService,
                UserService userService) {
+        this.processing = processing;
         this.answerCollectService = answerCollectService;
         this.queueService = queueService;
         this.commandProcessor = commandProcessor;
@@ -64,26 +65,35 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        SendMessage sendMessage ;
-        if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
-            User user = userService.getUser(update);
-            if (isCommand(update)) {
-                sendMessage = commandProcessor.createResponse(user,update);
-            } else {
-                sendMessage = answerCollectService.createResponse(user, update);
-            }
-        } else {
-            sendMessage = new SendMessage();
-            sendMessage.setText(propertiesService.getAsString(Properties.SUSPEND_TEXT));
-        }
+        MessageHandler messageHandler = new MessageHandler(update, this.queueService,
+            this.answerCollectService,
+            this.commandProcessor,
+            this.propertiesService,
+            this.userService
+        );
 
-        if (sendMessage != null) {
-            Long chatId = getChadId(update);
-            sendMessage.setChatId(chatId);
-            queueService.add(sendMessage);
-        } else {
-            LOGGER.info("Пустоее сообение не отпровляем!!!");
-        }
+        processing.execute(messageHandler);
+
+//        SendMessage sendMessage ;
+//        if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
+//            User user = userService.getUser(update);
+//            if (isCommand(update)) {
+//                sendMessage = commandProcessor.createResponse(user,update);
+//            } else {
+//                sendMessage = answerCollectService.createResponse(user, update);
+//            }
+//        } else {
+//            sendMessage = new SendMessage();
+//            sendMessage.setText(propertiesService.getAsString(Properties.SUSPEND_TEXT));
+//        }
+//
+//        if (sendMessage != null) {
+//            Long chatId = getChadId(update);
+//            sendMessage.setChatId(chatId);
+//            queueService.add(sendMessage);
+//        } else {
+//            LOGGER.info("Пустоее сообение не отпровляем!!!");
+//        }
     }
 
     @Override

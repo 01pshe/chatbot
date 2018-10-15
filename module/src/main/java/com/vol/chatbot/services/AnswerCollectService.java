@@ -12,10 +12,14 @@ import com.vol.chatbot.services.propertiesservice.PropertiesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 @Component
 public class AnswerCollectService implements BotService {
@@ -26,23 +30,36 @@ public class AnswerCollectService implements BotService {
     private QuestionDao questionDao;
     private UserService userService;
     private PropertiesService propertiesService;
+    private LocalContainerEntityManagerFactoryBean entityManagerFactory;
+    private EntityManagerFactory emf;
+    private JpaTransactionManager transactionManager;
 
     @Autowired
     public AnswerCollectService(QuestionService questionService,
                                 AnswerDao answerDao,
                                 QuestionDao questionDao,
                                 UserService userService,
-                                PropertiesService propertiesService) {
+                                PropertiesService propertiesService,
+                                LocalContainerEntityManagerFactoryBean entityManagerFactory,
+                                EntityManagerFactory emf,
+                                JpaTransactionManager transactionManager) {
         this.questionService = questionService;
         this.answerDao = answerDao;
         this.questionDao = questionDao;
         this.userService = userService;
         this.propertiesService = propertiesService;
+        this.entityManagerFactory = entityManagerFactory;
+        this.emf = emf;
+        this.transactionManager = transactionManager;
     }
 
-    @Transactional
+
     @Override
-    public SendMessage createResponse(User user, Update update) {
+    public synchronized SendMessage createResponse(User user, Update update) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction();
+
+
 
         AnswerHelper answerHelper = new AnswerHelper(user,
             propertiesService.getAsInteger(Properties.CURRENT_DAY),

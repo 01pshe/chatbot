@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class AnswerHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnswerHelper.class);
@@ -38,7 +39,15 @@ public class AnswerHelper {
         this.sysCurrentDay = sysCurrentDay;
         this.answerDao = answerDao;
         this.questionDao = questionDao;
-        passedQuestions = answerDao.findQuestionAllByUserAndDayAnswer(user, this.sysCurrentDay);
+        try {
+            passedQuestions = this.answerDao.findQuestionAllByUserAndDayAnswer(user, this.sysCurrentDay);
+        } catch (Exception e) {
+            passedQuestions = this.answerDao.findAll().stream()
+                .filter(answer -> answer.getUser().getId().equals(this.user.getId()) && answer.getDayAnswer().equals(this.sysCurrentDay))
+                .map(Answer::getQuestion)
+                .collect(Collectors.toList());
+//            LOGGER.info("passedQuestions Ошибка получения пройденных вопросов: ", e);
+        }
 
         if (update.hasCallbackQuery()) {
             initCallback(update);
@@ -61,10 +70,18 @@ public class AnswerHelper {
 
     public UserResult getUserResultByCurrentDay() {
         UserResult currentResult = new UserResult();
-        answerDao.findAllByUserAndDayAnswer(this.user, this.sysCurrentDay)
-            .filter(entity -> entity.getQuestion() != null)
-            .forEach(entity ->
-                currentResult.incAnswer(entity.getQuestion().getWeight(), entity.getQuestion().checkResult(entity.getUserAnswer())));
+        try {
+            answerDao.findAllByUserAndDayAnswer(this.user, this.sysCurrentDay)
+                .filter(entity -> entity.getQuestion() != null)
+                .forEach(entity ->
+                    currentResult.incAnswer(entity.getQuestion().getWeight(), entity.getQuestion().checkResult(entity.getUserAnswer())));
+        } catch (Exception e) {
+            answerDao.findAll().stream()
+                .filter(answer -> answer.getUser().getId().equals(this.user.getId()) && answer.getDayAnswer().equals(this.sysCurrentDay) && answer.getQuestion() != null)
+                .forEach(answer ->
+                    currentResult.incAnswer(answer.getQuestion().getWeight(), answer.getQuestion().checkResult(answer.getUserAnswer())));
+//            LOGGER.info("currentResult Ошибка получения результата: ", e);
+        }
         return currentResult;
     }
 
@@ -79,7 +96,14 @@ public class AnswerHelper {
             String[] array = callbackQuery.getData().split(";");
             this.questionId = Long.valueOf(array[0]);
             this.userAnswer = array[1];
-            this.expectedAnswers = answerDao.findAllByUserAndUserAnswerAndDayAnswer(this.user, null, this.sysCurrentDay);
+            try {
+                this.expectedAnswers = answerDao.findAllByUserAndUserAnswerAndDayAnswer(this.user, null, this.sysCurrentDay);
+            } catch (Exception e) {
+                this.expectedAnswers = answerDao.findAll().stream()
+                    .filter(answer -> answer.getUser().getId().equals(this.user.getId()) && answer.getUserAnswer() == null && answer.getDayAnswer().equals(this.sysCurrentDay))
+                    .collect(Collectors.toList());
+//                LOGGER.info("passedQuestions Ошибка получения ожидаемых вопросов: ", e);
+            }
             if (this.expectedAnswers.size() == 1 && this.expectedAnswers.get(0).getQuestion() != null &&
                 this.expectedAnswers.get(0).getQuestion().getId().equals(this.questionId)) {
                 this.isExpectedAnswer = true;
