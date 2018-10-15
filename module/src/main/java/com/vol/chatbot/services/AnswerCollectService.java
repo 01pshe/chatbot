@@ -58,8 +58,6 @@ public class AnswerCollectService implements BotService {
             AnswerHelper answerHelper = new AnswerHelper(user,
                 propertiesService.getAsInteger(Properties.CURRENT_DAY),
                 update,
-                answerDao,
-                questionDao,
                 entityManager
             );
             SendMessage sendMessage = null;

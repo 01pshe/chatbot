@@ -1,7 +1,5 @@
 package com.vol.chatbot.services;
 
-import com.vol.chatbot.dao.AnswerDao;
-import com.vol.chatbot.dao.QuestionDao;
 import com.vol.chatbot.model.Answer;
 import com.vol.chatbot.model.Question;
 import com.vol.chatbot.model.User;
@@ -22,8 +20,6 @@ public class AnswerHelper {
     private Boolean isCallback;
     private User user;
     private int sysCurrentDay;
-    private AnswerDao answerDao;
-    private QuestionDao questionDao;
     private EntityManager entityManager;
 
     // Вопросы которые уже задовали
@@ -35,11 +31,9 @@ public class AnswerHelper {
     // пришел ожидаемый вопрос
     private boolean isExpectedAnswer = false;
 
-    public AnswerHelper(User user, int sysCurrentDay, Update update, AnswerDao answerDao, QuestionDao questionDao, EntityManager entityManager) {
+    public AnswerHelper(User user, int sysCurrentDay, Update update, EntityManager entityManager) {
         this.user = user;
         this.sysCurrentDay = sysCurrentDay;
-        this.answerDao = answerDao;
-        this.questionDao = questionDao;
         this.entityManager = entityManager;
         passedQuestions = this.entityManager.createNativeQuery("select q.* from bot_question q, bot_answer a where a.question_id = q.id and a.user_id = :userId and a.day_answer = :dayAnswer", Question.class)
             .setParameter("userId", user.getId())
