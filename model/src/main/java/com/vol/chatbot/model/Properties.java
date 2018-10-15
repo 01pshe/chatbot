@@ -11,6 +11,7 @@ public enum Properties {
     RESULT_EXCELLENT_PCT("80"),
     RESULT_GOOD_PCT("50"),
     RESULT_BAD_PCT("0"),
+    MESSAGE_HANDLER_COUNT("16"),
     EXCELLENT_RESULT("Молодец\uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n" +
         "\n" +
         " ✅ Твой результат - %.2f процентов!\n" +

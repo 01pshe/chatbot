@@ -58,28 +58,28 @@ public class UserService {
         return set;
     }
 
-    public User getUser(Update update) {
+    public User getUser(Update update, Long chatId) {
         org.telegram.telegrambots.meta.api.objects.User telegramUser;
         if (update.hasCallbackQuery()) {
             telegramUser = update.getCallbackQuery().getFrom();
         } else {
             telegramUser = update.getMessage().getFrom();
         }
-        return getUser(telegramUser);
+        return getUser(telegramUser, chatId);
     }
 
 
-    public User getUser(org.telegram.telegrambots.meta.api.objects.User telegramUser) {
+    public User getUser(org.telegram.telegrambots.meta.api.objects.User telegramUser, Long chatId) {
         User user = getBySignature(telegramUser.getId().toString());
         if (user != null) {
             return user;
         }
-        user = createUser(telegramUser);
+        user = createUser(telegramUser, chatId);
         return user;
 
     }
 
-    public User createUser(org.telegram.telegrambots.meta.api.objects.User telegramUser) {
+    public User createUser(org.telegram.telegrambots.meta.api.objects.User telegramUser, Long chatId) {
         User user;
         user = new User();
         user.setBot(telegramUser.getBot());
@@ -89,6 +89,7 @@ public class UserService {
         user.setUserName(telegramUser.getUserName());
         user.setDateCreate(new Date());
         user.setPassDay(0);
+        user.setChatId(chatId);
         save(user);
         return user;
     }

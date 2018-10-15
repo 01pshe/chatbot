@@ -2,7 +2,10 @@ create sequence hibernate_sequence start 1 increment 1;
 
 create table bot_answer (
   id int8 not null,
+  dateCreate timestamp,
+  dateUserAnswer timestamp,
   day_answer int4,
+  result varchar(255),
   user_answer varchar(255),
   question_id int8,
   user_id int8,
@@ -42,6 +45,7 @@ create table bot_question (
 create table bot_users (
   id int8 not null,
   bot boolean,
+  chat_id int8,
   dateCreate timestamp,
   day_one_result varchar(255),
   day_two_result varchar(255),
