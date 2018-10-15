@@ -116,7 +116,6 @@ public class AnswerCollectService implements BotService {
 
     }
 
-
     private void saveAnswerByUser(AnswerHelper helper) {
         helper.getExpectedAnswers().stream()
             .filter(answer -> answer.getUserAnswer() == null && answer.getQuestion() != null &&
