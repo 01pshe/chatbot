@@ -116,7 +116,10 @@ public class CommandProcessor implements BotService {
                         SendMessage message = new SendMessage();
                         message.enableMarkdown(true);
                         message.setChatId(update.getMessage().getChatId());
-                        message.setText(propertiesService.getAsString(Properties.WELCOME_TEXT));
+                        String preparedText = String.format(
+                            propertiesService.getAsString(Properties.WELCOME_TEXT),
+                            user.getUserFirstName());
+                        message.setText(preparedText);
                         queueService.add(message);
                         answer = answerCollectService.createResponse(user, update);
                     } else {
