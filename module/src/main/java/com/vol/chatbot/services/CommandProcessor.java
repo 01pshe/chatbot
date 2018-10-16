@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,17 +27,21 @@ public class CommandProcessor implements BotService {
     private MessageSender messageSender;
     private QueueService queueService;
     private BotService answerCollectService;
+    private EntityManagerFactory entityManagerFactory;
 
 
 
     @Autowired
     public CommandProcessor(@Qualifier("answerCollectService") BotService answerCollectService,
-        PropertiesService propertiesService,
-                            MessageSender messageSender, QueueService queueService) {
+                            PropertiesService propertiesService,
+                            MessageSender messageSender,
+                            QueueService queueService,
+                            EntityManagerFactory entityManagerFactory) {
         this.propertiesService = propertiesService;
         this.messageSender = messageSender;
         this.queueService = queueService;
         this.answerCollectService = answerCollectService;
+        this.entityManagerFactory = entityManagerFactory;
     }
 
 
@@ -94,18 +100,31 @@ public class CommandProcessor implements BotService {
                 break;
             case SEND_MESSAGE_BY_NAMES:
                 String text = args.substring(0,args.indexOf(';'));
-                String namesString = args.substring(text.length());
+                String namesString = args.substring(text.length()+1);
                 Set<String> names = new HashSet<>(Arrays.asList(namesString.split(",")));
                 messageSender.sendAllByNic(text,names);
                 answer.setText("message was sent");
                 break;
             case START:
-                SendMessage message = new SendMessage();
-                message.enableMarkdown(true);
-                message.setChatId(update.getMessage().getChatId());
-                message.setText(propertiesService.getAsString(Properties.WELCOME_TEXT));
-                queueService.add(message);
-                answer = answerCollectService.createResponse(user, update);
+                EntityManager em = entityManagerFactory.createEntityManager();
+                try {
+                    AnswerHelper ah = new AnswerHelper(user,
+                        propertiesService.getAsInteger(Properties.CURRENT_DAY),
+                        update,
+                        em);
+                    if (ah.getPassedQuestions().isEmpty()) {
+                        SendMessage message = new SendMessage();
+                        message.enableMarkdown(true);
+                        message.setChatId(update.getMessage().getChatId());
+                        message.setText(propertiesService.getAsString(Properties.WELCOME_TEXT));
+                        queueService.add(message);
+                        answer = answerCollectService.createResponse(user, update);
+                    } else {
+                        answer = null;
+                    }
+                } finally {
+                    em.close();
+                }
                 break;
             default:
                 answer.setText("Команда не поддерживается.");
