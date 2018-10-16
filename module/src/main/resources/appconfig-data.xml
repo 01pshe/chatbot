@@ -16,8 +16,8 @@
         <property name="username" value="${jdbc.username}"/>
         <property name="password" value="${jdbc.password}"/>
         <property name="initialSize" value="16"/>
-        <property name="minIdle" value="8"/>
-        <property name="maxIdle" value="32"/>
+        <property name="minIdle" value="16"/>
+        <property name="maxIdle" value="64"/>
     </bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">

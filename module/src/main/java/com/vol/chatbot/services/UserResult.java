@@ -5,7 +5,7 @@ import com.vol.chatbot.model.QuestionWeight;
 import com.vol.chatbot.services.propertiesservice.PropertiesService;
 
 public class UserResult {
-
+    private String userName;
     private int difficultAnswer;
     private int mediumAnswer;
     private int easyAnswer;
@@ -15,6 +15,10 @@ public class UserResult {
     private int easyCorrect;
 
     private int points;
+
+    public UserResult(String userName) {
+        this.userName = userName;
+    }
 
     public int getAnswerAll() {
         return difficultAnswer + mediumAnswer + easyAnswer;
@@ -60,15 +64,15 @@ public class UserResult {
         if (this.getPercentage() >= propertiesService.getAsFloat(Properties.RESULT_EXCELLENT_PCT)) {
             prop = Properties.EXCELLENT_RESULT;
             total = prop.getDefaultVal();
-        }else if (this.getPercentage() >= propertiesService.getAsFloat(Properties.RESULT_GOOD_PCT)){
+        } else if (this.getPercentage() >= propertiesService.getAsFloat(Properties.RESULT_GOOD_PCT)) {
             prop = Properties.GOOD_RESULT;
             total = prop.getDefaultVal();
-        }else if (this.getPercentage() >= propertiesService.getAsFloat(Properties.RESULT_BAD_PCT)){
+        } else if (this.getPercentage() >= propertiesService.getAsFloat(Properties.RESULT_BAD_PCT)) {
             prop = Properties.BAD_RESULT;
             total = prop.getDefaultVal();
-        }else {
+        } else {
             total = "Жизнь прекрасна, не печальтесь!";
         }
-        return String.format(total, getPercentage());
+        return String.format(total, this.userName, getPercentage());
     }
 }
