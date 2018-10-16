@@ -7,6 +7,8 @@ create table bot_answer (
   day_answer int4,
   result varchar(255),
   user_answer varchar(255),
+  user_name varchar(255),
+  weight varchar(9) not null,
   question_id int8,
   user_id int8,
   primary key (id)

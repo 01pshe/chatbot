@@ -67,6 +67,7 @@ public class MessageHandler extends RecursiveAction {
             if (sendMessage != null) {
                 Long chatId = getChadId(update);
                 sendMessage.setChatId(chatId);
+                sendMessage.enableMarkdown(true);
                 queueService.add(sendMessage);
             } else {
                 LOGGER.info("Пустое сообение не отправляем!!!");

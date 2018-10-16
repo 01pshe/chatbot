@@ -12,7 +12,7 @@ public enum Properties {
     RESULT_GOOD_PCT("50"),
     RESULT_BAD_PCT("0"),
     MESSAGE_HANDLER_COUNT("16"),
-    EXCELLENT_RESULT("Молодец\uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n" +
+    EXCELLENT_RESULT("Молодец, *%s* \uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n" +
         "\n" +
         " ✅ Твой результат - %.2f процентов!\n" +
         "\n" +
@@ -20,12 +20,12 @@ public enum Properties {
         "\n" +
         "А еще ты можешь принять участие в розыгрыше главного приза\uD83D\uDC4C. \n" +
         "Розыгрыш пройдёт на стенде СберТеха 20 октября в 17:10!"),
-    GOOD_RESULT("Молодец\uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n" +
+    GOOD_RESULT("Молодец, *%s* \uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n" +
         "\n" +
         " ✅ Твой результат - %.2f процентов!\n" +
         "\n" +
         "Приходи на стенд СберТеха, покажи свой результат и получи приз.\uD83C\uDF81\uD83C\uDF81\uD83C\uDF81"),
-    BAD_RESULT("Молодец\uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n"+
+    BAD_RESULT("Молодец, *%s* \uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n"+
         "\n" +
         " ✅ Твой результат - %.2f процентов!\n" +
         "\n" +

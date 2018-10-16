@@ -35,6 +35,13 @@ public class Answer {
     @JoinColumn(name = "question_id")
     private Question question;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "weight", length = 9, nullable = false)
+    private QuestionWeight weight;
+
+    @Column(name = "user_name")
+    private String userName;
+
     public Long getId() {
         return id;
     }
@@ -71,27 +78,23 @@ public class Answer {
         this.dayAnswer = dayAnswer;
     }
 
-    public String getResult() {
-        return result;
-    }
-
     public void setResult(String result) {
         this.result = result;
-    }
-
-    public Date getDateUserAnswer() {
-        return dateUserAnswer;
     }
 
     public void setDateUserAnswer(Date dateUserAnswer) {
         this.dateUserAnswer = dateUserAnswer;
     }
 
-    public Date getDateCreate() {
-        return dateCreate;
-    }
-
     public void setDateCreate(Date dateCreate) {
         this.dateCreate = dateCreate;
+    }
+
+    public void setWeight(QuestionWeight weight) {
+        this.weight = weight;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

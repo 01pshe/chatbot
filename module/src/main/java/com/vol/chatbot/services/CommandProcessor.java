@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -30,7 +29,6 @@ public class CommandProcessor implements BotService {
     private EntityManagerFactory entityManagerFactory;
 
 
-
     @Autowired
     public CommandProcessor(@Qualifier("answerCollectService") BotService answerCollectService,
                             PropertiesService propertiesService,
@@ -44,22 +42,13 @@ public class CommandProcessor implements BotService {
         this.entityManagerFactory = entityManagerFactory;
     }
 
-
-    public enum Command {
-        START,
-        SEND_MESSAGE_TO_ALL,
-        SEND_MESSAGE_BY_NAMES,
-        PROPERTY,
-        UNSUPPORTED
-    }
-
     @Override
     public SendMessage createResponse(User user, Update update) {
         String msg = update.getMessage().getText().substring(1).toUpperCase();
         int pos = msg.indexOf(' ');
         String stringCommand;
         String args = "";
-        if (pos>0){
+        if (pos > 0) {
             stringCommand = msg.substring(0, pos);
             args = msg.substring(pos + 1);
         } else {
@@ -71,12 +60,12 @@ public class CommandProcessor implements BotService {
 
     }
 
-    private Command getCommandFromString(String commandString){
+    private Command getCommandFromString(String commandString) {
         Command command = Command.UNSUPPORTED;
         Iterator<Command> iter = Arrays.asList(Command.values()).iterator();
-        while (iter.hasNext()&&command==Command.UNSUPPORTED){
+        while (iter.hasNext() && command == Command.UNSUPPORTED) {
             Command tmp = iter.next();
-            if (tmp.name().equals(commandString)){
+            if (tmp.name().equals(commandString)) {
                 command = tmp;
             }
         }
@@ -99,19 +88,14 @@ public class CommandProcessor implements BotService {
                 answer.setText("message was sent");
                 break;
             case SEND_MESSAGE_BY_NAMES:
-                String text = args.substring(0,args.indexOf(';'));
-                String namesString = args.substring(text.length()+1);
+                String text = args.substring(0, args.indexOf(';'));
+                String namesString = args.substring(text.length() + 1);
                 Set<String> names = new HashSet<>(Arrays.asList(namesString.split(",")));
-                messageSender.sendAllByNic(text,names);
+                messageSender.sendAllByNic(text, names);
                 answer.setText("message was sent");
                 break;
             case START:
-                EntityManager em = entityManagerFactory.createEntityManager();
-                try {
-                    AnswerHelper ah = new AnswerHelper(user,
-                        propertiesService.getAsInteger(Properties.CURRENT_DAY),
-                        update,
-                        em);
+                try (AnswerHelper ah = new AnswerHelper(user, propertiesService.getAsInteger(Properties.CURRENT_DAY), update, entityManagerFactory)) {
                     if (ah.getPassedQuestions().isEmpty()) {
                         SendMessage message = new SendMessage();
                         message.enableMarkdown(true);
@@ -122,8 +106,6 @@ public class CommandProcessor implements BotService {
                     } else {
                         answer = null;
                     }
-                } finally {
-                    em.close();
                 }
                 break;
             default:
@@ -131,5 +113,13 @@ public class CommandProcessor implements BotService {
                 break;
         }
         return answer;
+    }
+
+    public enum Command {
+        START,
+        SEND_MESSAGE_TO_ALL,
+        SEND_MESSAGE_BY_NAMES,
+        PROPERTY,
+        UNSUPPORTED
     }
 }

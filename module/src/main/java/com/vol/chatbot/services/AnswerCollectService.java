@@ -1,8 +1,6 @@
 package com.vol.chatbot.services;
 
 import com.vol.chatbot.bot.BotService;
-import com.vol.chatbot.dao.AnswerDao;
-import com.vol.chatbot.dao.QuestionDao;
 import com.vol.chatbot.keyboard.InlineKeyboard;
 import com.vol.chatbot.model.Answer;
 import com.vol.chatbot.model.Properties;
@@ -29,22 +27,16 @@ public class AnswerCollectService implements BotService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnswerCollectService.class);
 
     private QuestionService questionService;
-    private AnswerDao answerDao;
-    private QuestionDao questionDao;
     private UserService userService;
     private PropertiesService propertiesService;
     private EntityManagerFactory entityManagerFactory;
 
     @Autowired
     public AnswerCollectService(QuestionService questionService,
-                                AnswerDao answerDao,
-                                QuestionDao questionDao,
                                 UserService userService,
                                 PropertiesService propertiesService,
                                 EntityManagerFactory entityManagerFactory) {
         this.questionService = questionService;
-        this.answerDao = answerDao;
-        this.questionDao = questionDao;
         this.userService = userService;
         this.propertiesService = propertiesService;
         this.entityManagerFactory = entityManagerFactory;
@@ -53,13 +45,7 @@ public class AnswerCollectService implements BotService {
     @Override
     public SendMessage createResponse(User user, Update update) {
 
-        EntityManager entityManager = this.entityManagerFactory.createEntityManager();
-        try {
-            AnswerHelper answerHelper = new AnswerHelper(user,
-                propertiesService.getAsInteger(Properties.CURRENT_DAY),
-                update,
-                entityManager
-            );
+        try (AnswerHelper answerHelper = new AnswerHelper(user, propertiesService.getAsInteger(Properties.CURRENT_DAY), update, this.entityManagerFactory)) {
             SendMessage sendMessage = null;
 
             // попытка ответить на другой вопрос
@@ -101,6 +87,7 @@ public class AnswerCollectService implements BotService {
                 questionNew = questionService.getQuestion(answerHelper);
             }
 
+            // вопрос получили, сохраним его
             if (questionNew != null) {
                 sendMessage = InlineKeyboard.getKeyboard(questionNew);
                 sendMessage.setText(questionNew.getQuestion());
@@ -109,10 +96,6 @@ public class AnswerCollectService implements BotService {
 
             return sendMessage;
 
-        } finally {
-            if (entityManager != null) {
-                entityManager.close();
-            }
         }
 
     }
@@ -154,7 +137,7 @@ public class AnswerCollectService implements BotService {
 
         try {
             transaction.begin();
-            List list = entityManager.createNativeQuery("select * from bot_answer a where a.user_id = :userId and a.day_answer = :dayAnswer and a.question_id = :questionId", Answer.class)
+            List list = entityManager.createNativeQuery("select a.* from bot_answer a where a.user_id = :userId and a.day_answer = :dayAnswer and a.question_id = :questionId", Answer.class)
                 .setParameter("userId", user.getId())
                 .setParameter("dayAnswer", propertiesService.getAsInteger(Properties.CURRENT_DAY))
                 .setParameter("questionId", question.getId())
@@ -166,6 +149,8 @@ public class AnswerCollectService implements BotService {
                 answer.setQuestion(question);
                 answer.setDayAnswer(propertiesService.getAsInteger(Properties.CURRENT_DAY));
                 answer.setDateCreate(new Date());
+                answer.setWeight(question.getWeight());
+                answer.setUserName(user.getUserFirstName());
                 entityManager.persist(answer);
                 entityManager.flush();
                 transaction.commit();
