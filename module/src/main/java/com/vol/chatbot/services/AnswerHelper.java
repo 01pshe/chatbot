@@ -11,6 +11,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.LockModeType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,6 +160,32 @@ public class AnswerHelper implements AutoCloseable {
         Question question = this.entityManager.find(Question.class, this.questionId);
         return String.valueOf(question.checkResult(this.userAnswer));
     }
+
+    public boolean startFirst() {
+
+        boolean start = false;
+        EntityTransaction transaction = entityManager.getTransaction();
+
+        try {
+            transaction.begin();
+
+            User userLock = this.entityManager.find(User.class, this.user.getId(), LockModeType.PESSIMISTIC_WRITE);
+
+            if (!userLock.isStartFirst()) {
+                userLock.setStartFirst(true);
+                entityManager.merge(userLock);
+                entityManager.flush();
+                start = true;
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            start = false;
+        }
+
+        return start;
+    }
+
 
     @Override
     public void close() {

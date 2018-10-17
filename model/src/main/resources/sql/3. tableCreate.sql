@@ -53,6 +53,7 @@ create table bot_users (
   day_two_result Decimal(10,2) default '00.00',
   pass_day int4,
   signature varchar(255) not null,
+  start_first boolean,
   total_result Decimal(10,2) default '00.00',
   userfirstname varchar(255),
   userlastname varchar(255),
