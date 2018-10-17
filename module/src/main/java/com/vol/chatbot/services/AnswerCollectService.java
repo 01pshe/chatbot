@@ -119,7 +119,7 @@ public class AnswerCollectService implements BotService {
                         entityManager.flush();
                         transaction.commit();
                     } else {
-                        throw new HibernateException("Запись уже обновлена ранее, имя потока: " + Thread.currentThread().getName());
+                        throw new HibernateException("Запись уже обновлена ранее, имя текущего потока: " + Thread.currentThread().getName());
                     }
                 } catch (Exception e) {
                     transaction.rollback();
@@ -156,7 +156,7 @@ public class AnswerCollectService implements BotService {
                 transaction.commit();
                 LOGGER.info("Пользователю {}, задали вопрос {}", user, question);
             } else {
-                throw new HibernateException("Запись уже добавлена ранее, имя потока: " + Thread.currentThread().getName());
+                throw new HibernateException("Запись уже добавлена ранее, имя текущего потока: " + Thread.currentThread().getName());
             }
         } catch (Exception e) {
             transaction.rollback();

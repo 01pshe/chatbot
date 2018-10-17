@@ -106,6 +106,8 @@ public class CommandProcessor implements BotService {
                         message.setText(preparedText);
                         queueService.add(message);
                         answer = answerCollectService.createResponse(user, update);
+                    } else if (ah.getExpectedAnswers().size() == 1) {
+                        answer = ah.getQuestionLastMessage();
                     } else {
                         answer = null;
                     }
