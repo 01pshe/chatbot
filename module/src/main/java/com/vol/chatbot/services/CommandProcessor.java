@@ -96,7 +96,10 @@ public class CommandProcessor implements BotService {
                 break;
             case START:
                 try (AnswerHelper ah = new AnswerHelper(user, propertiesService.getAsInteger(Properties.CURRENT_DAY), update, entityManagerFactory)) {
-                    if (ah.getPassedQuestions().isEmpty()) {
+
+
+                    if (ah.startFirst()) {
+//                    if (ah.getPassedQuestions().isEmpty()) {
                         SendMessage message = new SendMessage();
                         message.enableMarkdown(true);
                         message.setChatId(update.getMessage().getChatId());
