@@ -46,6 +46,9 @@ public class User {
     @Column(name = "chat_id")
     private Long chatId;
 
+    @Column(name = "start_first")
+    private boolean startFirst;
+
     public User() {
         // Do nothing
     }
@@ -144,6 +147,14 @@ public class User {
 
     public void setChatId(Long chatId) {
         this.chatId = chatId;
+    }
+
+    public boolean isStartFirst() {
+        return startFirst;
+    }
+
+    public void setStartFirst(boolean startFirst) {
+        this.startFirst = startFirst;
     }
 
     @Override
