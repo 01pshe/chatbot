@@ -26,7 +26,7 @@ create table bot_messages (
 create table bot_properties (
   id int8 not null,
   property_name varchar(255) not null,
-  property_value varchar(255),
+  property_value varchar(4096),
   primary key (id)
 );
 
@@ -49,10 +49,11 @@ create table bot_users (
   bot boolean,
   chat_id int8,
   dateCreate timestamp,
-  day_one_result varchar(255),
-  day_two_result varchar(255),
+  day_one_result Decimal(10,2) default '00.00',
+  day_two_result Decimal(10,2) default '00.00',
   pass_day int4,
   signature varchar(255) not null,
+  total_result Decimal(10,2) default '00.00',
   userfirstname varchar(255),
   userlastname varchar(255),
   username varchar(255),
