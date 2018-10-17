@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Set;
 
 public interface UserDao extends JpaRepository<User, Long> {
@@ -22,4 +23,9 @@ public interface UserDao extends JpaRepository<User, Long> {
 
     @Query("select chatId from User where id in :userIdSet")
     Set<Long> getAllUsersChatIdByIdSet(@Param("userIdSet") Set<Long> id);
+
+    @Query("select u from User u order by u.totalResult")
+    List<User> getAllSort();
+
+
 }
