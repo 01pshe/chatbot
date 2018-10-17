@@ -7,7 +7,7 @@ import java.util.List;
 
 public class PropWrapper {
 
-    private List<Property> props;
+    private List<Property> props = new ArrayList<>(0);
 
     public List<Property> getProps() {
         return props;

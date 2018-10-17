@@ -1,17 +1,14 @@
 package com.vol.chatbot.web.controller;
 
 import com.vol.chatbot.dao.PropertiesDao;
-import com.vol.chatbot.model.Properties;
-import com.vol.chatbot.model.Property;
 import com.vol.chatbot.web.properties.PropWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+
 
 @Controller
 public class PropertiesController {
@@ -32,15 +29,12 @@ public class PropertiesController {
         return "properties";
     }
 
-    @RequestMapping(value={"/properties/{id}"},method = RequestMethod.GET)
-    public Property getOne(@PathVariable("id") long id, Model model) {
-        Property prop = propertiesDao.findById(id).orElse(null);
-        return prop;
-    }
 
     @RequestMapping(value={"/properties"},method = RequestMethod.POST)
-    public String saveOne(Model model) {
-                model.addAttribute("properties",propertiesDao.findAll());
+    public String save(PropWrapper wrapper, Model model) {
+        LOGGER.info("msg ",wrapper);
+        propertiesDao.saveAll(wrapper.getProps());
+        model.addAttribute("wrapper",wrapper);
         return "properties";
     }
 

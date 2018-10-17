@@ -33,16 +33,20 @@
             <table class="table table-striped table-bordered">
                 <tr>
                     <th>id</th>
-                    <th>propertyName</th>
-                    <th>propertyValue</th>
-                    <th></th>
+                    <th>Name</th>
+                    <th>old Value</th>
+                    <th>new Value</th>
                 </tr>
-                <th:block th:each="property, stat: ${properties}">
+                <th:block th:each="property, stat: ${wrapper.props}">
                     <tr>
                         <td th:text="${property.id}"></td>
                         <td th:text="${property.propertyName}"></td>
                         <td th:text="${property.propertyValue}"></td>
                         <td>
+                            <input type="hidden"
+                                   th:field="*{props[__${stat.index}__].id}"/>
+                            <input type="hidden"
+                                   th:field="*{props[__${stat.index}__].propertyName}"/>
                             <input type="text"
                                    th:field="*{props[__${stat.index}__].propertyValue}"/>
                         </td>
