@@ -1,10 +1,12 @@
 package com.vol.chatbot.services;
 
+import com.vol.chatbot.keyboard.InlineKeyboard;
 import com.vol.chatbot.model.Answer;
 import com.vol.chatbot.model.Question;
 import com.vol.chatbot.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import javax.persistence.EntityManager;
@@ -38,6 +40,11 @@ public class AnswerHelper implements AutoCloseable {
 
         passedQuestions = this.entityManager.createNativeQuery("select q.* from bot_question q, bot_answer a where a.question_id = q.id and a.user_id = :userId and a.day_answer = :dayAnswer", Question.class)
             .setParameter("userId", this.user.getId())
+            .setParameter("dayAnswer", this.sysCurrentDay)
+            .getResultList();
+
+        this.expectedAnswers = this.entityManager.createNativeQuery("select a.* from bot_answer a where a.user_id = :userId and a.day_answer = :dayAnswer and a.user_answer is null", Answer.class)
+            .setParameter("userId", user.getId())
             .setParameter("dayAnswer", this.sysCurrentDay)
             .getResultList();
 
@@ -81,6 +88,19 @@ public class AnswerHelper implements AutoCloseable {
         return currentResult;
     }
 
+    public SendMessage getQuestionLastMessage() {
+        SendMessage sendMessage = null;
+        if (this.expectedAnswers.size() == 1) {
+            Question questionLast = this.expectedAnswers.get(0).getQuestion();
+            sendMessage = InlineKeyboard.getKeyboard(questionLast);
+            sendMessage.setText(questionLast.getQuestion());
+        } else {
+            LOGGER.info("Не смогли определить последнее не отвеченное сообщение, expectedAnswers: {}", this.expectedAnswers);
+        }
+        return sendMessage;
+
+    }
+
     private void initMessage(Update update) {
         isCallback = Boolean.FALSE;
     }
@@ -88,14 +108,9 @@ public class AnswerHelper implements AutoCloseable {
     private void initCallback(Update update) {
         isCallback = Boolean.TRUE;
         try {
-            String[] array = update.getCallbackQuery().getData().split(";");
-            this.questionId = Long.valueOf(array[0]);
-            this.userAnswer = array[1];
-
-            this.expectedAnswers = this.entityManager.createNativeQuery("select a.* from bot_answer a where a.user_id = :userId and a.day_answer = :dayAnswer and a.user_answer is null", Answer.class)
-                .setParameter("userId", user.getId())
-                .setParameter("dayAnswer", this.sysCurrentDay)
-                .getResultList();
+            int index = update.getCallbackQuery().getData().indexOf(';');
+            this.questionId = Long.valueOf(update.getCallbackQuery().getData().substring(0, index));
+            this.userAnswer = update.getCallbackQuery().getData().substring(index + 1);
 
             if (this.expectedAnswers.size() == 1 && this.expectedAnswers.get(0).getQuestion() != null &&
                 this.expectedAnswers.get(0).getQuestion().getId().equals(this.questionId)) {
