@@ -2,7 +2,6 @@ package com.vol.chatbot.web.controller;
 
 
 import com.vol.chatbot.messagesender.MessageSender;
-import com.vol.chatbot.messagesender.MessageSenderImpl;
 import com.vol.chatbot.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,16 +23,6 @@ public class UserInfoController {
         this.userService = userInfoService;
         this.messageSender = messageSender;
     }
-
-//    @RequestMapping("/")
-//    public String index(Model model) {
-//        LOGGER.debug("redirect to index.jsp");
-//        String message = "Hello Bot";
-//
-//        model.addAttribute("message", message);
-//
-//        return "users";
-//    }
 
     @RequestMapping({"/","/users"})
     public String listAll(Model model) {
