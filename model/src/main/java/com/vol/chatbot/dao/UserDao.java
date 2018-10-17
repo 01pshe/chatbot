@@ -24,8 +24,7 @@ public interface UserDao extends JpaRepository<User, Long> {
     @Query("select chatId from User where id in :userIdSet")
     Set<Long> getAllUsersChatIdByIdSet(@Param("userIdSet") Set<Long> id);
 
-//    @Query("SELECT u, CAST(COALESCE(day_one_result, '0.00') AS FLOAT) + CAST(COALESCE(day_two_result, '0.00') AS FLOAT) AS SUMMM FROM User u")
-    @Query("select u from User u group by ")
+    @Query("select u from User u order by u.totalResult")
     List<User> getAllSort();
 
 

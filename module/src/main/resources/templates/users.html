@@ -35,6 +35,7 @@
                 <th>UserName</th>
                 <th>OneDay</th>
                 <th>TwoDay</th>
+                <th>TotalREsult</th>
             </tr>
             <th:block th:each="user : ${users}">
                 <tr>
@@ -44,6 +45,7 @@
                     <td th:text="${user.userName}"></td>
                     <td th:text="${user.dayOneResult}"></td>
                     <td th:text="${user.dayTwoResult}"></td>
+                    <td th:text="${user.totalResult}"></td>
                 </tr>
             </th:block>
         </table>

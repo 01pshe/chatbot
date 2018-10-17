@@ -111,6 +111,6 @@ public class UserService {
     }
 
     public List<User> getAll() {
-        return userDao.findAll();
+        return userDao.getAllSort();
     }
 }
