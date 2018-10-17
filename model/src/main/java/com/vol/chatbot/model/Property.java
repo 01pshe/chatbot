@@ -15,7 +15,7 @@ public class Property {
     @Column(name = "property_name", unique = true, nullable = false)
     private Properties propertyName;
 
-    @Column(name = "property_value")
+    @Column(name = "property_value", length = 4096)
     private String propertyValue;
 
     public Long getId() {

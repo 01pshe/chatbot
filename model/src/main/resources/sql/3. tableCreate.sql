@@ -26,7 +26,7 @@ create table bot_messages (
 create table bot_properties (
   id int8 not null,
   property_name varchar(255) not null,
-  property_value varchar(255),
+  property_value varchar(4096),
   primary key (id)
 );
 
