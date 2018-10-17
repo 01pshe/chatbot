@@ -34,11 +34,14 @@ public class User {
     @Column(name = "pass_day")
     private Integer passDay;
 
-    @Column(name = "day_one_result")
-    private String dayOneResult;
+    @Column(name = "day_one_result", columnDefinition = "Decimal(10,2) default '00.00'")
+    private float dayOneResult;
 
-    @Column(name = "day_two_result")
-    private String dayTwoResult;
+    @Column(name = "day_two_result", columnDefinition = "Decimal(10,2) default '00.00'")
+    private float dayTwoResult;
+
+    @Column(name = "total_result", columnDefinition = "Decimal(10,2) default '00.00'")
+    private float totalResult;
 
     @Column(name = "chat_id")
     private Long chatId;
@@ -51,16 +54,16 @@ public class User {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Integer getPassDay() {
         return passDay;
     }
 
     public void setPassDay(Integer passDay) {
         this.passDay = passDay;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getSignature() {
@@ -111,20 +114,28 @@ public class User {
         this.dateCreate = dateCreate;
     }
 
-    public String getDayOneResult() {
+    public float getDayOneResult() {
         return dayOneResult;
     }
 
-    public void setDayOneResult(String dayOneResult) {
+    public void setDayOneResult(float dayOneResult) {
         this.dayOneResult = dayOneResult;
     }
 
-    public String getDayTwoResult() {
+    public float getDayTwoResult() {
         return dayTwoResult;
     }
 
-    public void setDayTwoResult(String dayTwoResult) {
+    public void setDayTwoResult(float dayTwoResult) {
         this.dayTwoResult = dayTwoResult;
+    }
+
+    public float getTotalResult() {
+        return totalResult;
+    }
+
+    public void setTotalResult(float totalResult) {
+        this.totalResult = totalResult;
     }
 
     public Long getChatId() {
