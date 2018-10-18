@@ -43,6 +43,7 @@ public class ButtonProcessorImpl implements ButtonProcessor {
             prop.setPropertyValue("true");
         }
         propertiesDao.save(prop);
+        propertiesService.refreshProperties();
     }
 
     @Override
@@ -58,6 +59,7 @@ public class ButtonProcessorImpl implements ButtonProcessor {
             prop.setPropertyValue("false");
         }
         propertiesDao.save(prop);
+        propertiesService.refreshProperties();
     }
 
     @Override
