@@ -48,7 +48,7 @@ public class MessageSenderImpl implements MessageSender {
 
     @Override
     public void sendAllByNic(String messageText, Set<String> userFirstName) {
-        Set<String> users = userFirstName.stream().map(str->str.toUpperCase()).collect(Collectors.toSet());
+        Set<String> users = userFirstName.stream().map(String::toUpperCase).collect(Collectors.toSet());
         Iterator<Long> chatIdIterator = userDao.getAllUsersChatIdByFirstNameSet(users).iterator();
         sendByChatIdIterator(chatIdIterator,messageText);
     }

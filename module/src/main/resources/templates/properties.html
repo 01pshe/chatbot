@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <title>User page ChatBot</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="/css/bootstrap.min.css" rel="stylesheet">
 <script src="/js/jquery-3.3.1.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
@@ -15,6 +16,10 @@
                 <li><a href="/users">Users</a></li>
                 <li><a href="/messages">Messages</a></li>
                 <li><a href="/properties">Properties</a></li>
+                <li><a href="/controls">Controls</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#"><span class="glyphicon glyphicon-log-in"></span>Войти</a></li>
             </ul>
         </div>
     </div>
@@ -57,6 +62,6 @@
         <button type="submit" name="addRow">Save</button>
     </form>
 </div>
-<div th:replace="include/footer :: footer">&copy; 2016 The Static Templates</div>
+<!--<div th:replace="include/footer :: footer">&copy; 2016 The Static Templates</div>-->
 </body>
 </html>
