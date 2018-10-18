@@ -220,7 +220,7 @@ public class AnswerHelper implements AutoCloseable {
 
             User userLock = this.entityManager.find(User.class, this.user.getId(), LockModeType.PESSIMISTIC_WRITE);
 
-            if (userLock.isStartFirst() && !userLock.isStartSecond()) {
+            if (!userLock.isStartSecond()) {
                 userLock.setStartSecond(true);
                 entityManager.merge(userLock);
                 entityManager.flush();

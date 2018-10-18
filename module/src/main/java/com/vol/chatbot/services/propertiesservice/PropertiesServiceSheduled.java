@@ -39,7 +39,7 @@ public class PropertiesServiceSheduled implements PropertiesService {
     private void startScheduler() {
         refreshProperties();
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-        executor.scheduleAtFixedRate(this::refreshProperties, 1, this.propertiesRefreshTime, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(this::refreshProperties, 3, this.propertiesRefreshTime, TimeUnit.SECONDS);
     }
 
     @Override
