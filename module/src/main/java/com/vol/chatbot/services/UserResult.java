@@ -15,17 +15,10 @@ public class UserResult {
     private int easyCorrect;
 
     private int points;
+    private Float pct;
 
     public UserResult(String userName) {
         this.userName = userName;
-    }
-
-    public int getAnswerAll() {
-        return difficultAnswer + mediumAnswer + easyAnswer;
-    }
-
-    public int getAnswerCorrectAll() {
-        return difficultCorrect + mediumCorrect + easyCorrect;
     }
 
     public void incAnswer(QuestionWeight weight, Boolean isCorrect) {
@@ -54,25 +47,35 @@ public class UserResult {
         }
     }
 
-    public float getPercentage() {
-        return points * 100f / Constants.POINTS_MAX;
+    public float getPercentage(PropertiesService propertiesService) {
+        if (pct == null) {
+            int pintMax =
+                propertiesService.getAsInteger(Properties.DIFFICULT_QUESTION_CNT) * Constants.DIFFICULT_POINT +
+                    propertiesService.getAsInteger(Properties.MEDIUM_QUESTION_CNT) * Constants.MEDIUM_POINT +
+                    propertiesService.getAsInteger(Properties.EASY_QUESTION_CNT) * Constants.EASY_POINT;
+            pct = points * 100f / pintMax;
+        }
+        return pct;
     }
 
     public String getResultMessageByCurrentDay(PropertiesService propertiesService) {
         String total;
-        Properties prop = null;
-        if (this.getPercentage() >= propertiesService.getAsFloat(Properties.RESULT_EXCELLENT_PCT)) {
+        Properties prop;
+
+        float currentPCT = this.getPercentage(propertiesService);
+
+        if (currentPCT >= propertiesService.getAsFloat(Properties.RESULT_EXCELLENT_PCT)) {
             prop = Properties.EXCELLENT_RESULT;
             total = prop.getDefaultVal();
-        } else if (this.getPercentage() >= propertiesService.getAsFloat(Properties.RESULT_GOOD_PCT)) {
+        } else if (currentPCT >= propertiesService.getAsFloat(Properties.RESULT_GOOD_PCT)) {
             prop = Properties.GOOD_RESULT;
             total = prop.getDefaultVal();
-        } else if (this.getPercentage() >= propertiesService.getAsFloat(Properties.RESULT_BAD_PCT)) {
+        } else if (currentPCT >= propertiesService.getAsFloat(Properties.RESULT_BAD_PCT)) {
             prop = Properties.BAD_RESULT;
             total = prop.getDefaultVal();
         } else {
             total = "Жизнь прекрасна, не печальтесь!";
         }
-        return String.format(total, this.userName, getPercentage());
+        return String.format(total, this.userName, currentPCT);
     }
 }

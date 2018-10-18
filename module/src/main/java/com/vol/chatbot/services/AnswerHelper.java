@@ -2,10 +2,12 @@ package com.vol.chatbot.services;
 
 import com.vol.chatbot.keyboard.InlineKeyboard;
 import com.vol.chatbot.model.Answer;
+import com.vol.chatbot.model.Message;
 import com.vol.chatbot.model.Question;
 import com.vol.chatbot.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -14,7 +16,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.LockModeType;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 
 public class AnswerHelper implements AutoCloseable {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnswerHelper.class);
@@ -25,6 +29,7 @@ public class AnswerHelper implements AutoCloseable {
     private int sysCurrentDay;
 
     private EntityManager entityManager;
+    private EntityManagerFactory emf;
 
     // Вопросы которые уже задовали
     private List<Question> passedQuestions;
@@ -35,10 +40,12 @@ public class AnswerHelper implements AutoCloseable {
     // пришел ожидаемый вопрос
     private boolean isExpectedAnswer = false;
 
+
     public AnswerHelper(User user, int sysCurrentDay, Update update, EntityManagerFactory entityManagerFactory) {
         this.user = user;
         this.sysCurrentDay = sysCurrentDay;
-        this.entityManager = entityManagerFactory.createEntityManager();
+        this.emf = entityManagerFactory;
+        this.entityManager = this.emf.createEntityManager();
 
         passedQuestions = this.entityManager.createNativeQuery("select q.* from bot_question q, bot_answer a where a.question_id = q.id and a.user_id = :userId and a.day_answer = :dayAnswer", Question.class)
             .setParameter("userId", this.user.getId())
@@ -59,10 +66,6 @@ public class AnswerHelper implements AutoCloseable {
 
     public Boolean isEndCurrentDay() {
         return user.getPassDay() >= this.sysCurrentDay;
-    }
-
-    public Boolean isEndCurrentDayTest() {
-        return Constants.DAY_QUESTION_CNT <= passedQuestions.size();
     }
 
     public Boolean isTwiceAnswered() {
@@ -103,8 +106,28 @@ public class AnswerHelper implements AutoCloseable {
 
     }
 
-    private void initMessage(Update update) {
+
+    public void initMessage(Update update) {
         isCallback = Boolean.FALSE;
+
+        EntityManager em = this.emf.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+        try {
+            transaction.begin();
+            Message message = new Message();
+            message.setDate(new Date());
+            message.setInbound(Boolean.TRUE);
+            message.setMessageText(update.getMessage().getText());
+            message.setUser(this.user);
+            message.setNameUser(this.user.getUserFirstName());
+            em.persist(message);
+            em.flush();
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+        } finally {
+            em.close();
+        }
     }
 
     private void initCallback(Update update) {

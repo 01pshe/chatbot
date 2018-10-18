@@ -33,7 +33,6 @@ public class QuestionService {
 
     @Autowired
     public QuestionService(QuestionDao questionDao, PropertiesService propertiesService) {
-
         this.questionRefreshTime = propertiesService.getAsInteger(Properties.REFRESH_QUESTION_TIME);
         this.questionDao = questionDao;
         this.propertiesService = propertiesService;
@@ -83,17 +82,17 @@ public class QuestionService {
 
     private QuestionWeight getWeightCurrent(int dCnt, int mCnt, int eCnt) {
         QuestionWeight weight = null;
-        if (eCnt < Constants.EASY_QUESTION_CNT) {
+        if (eCnt < propertiesService.getAsInteger(Properties.EASY_QUESTION_CNT)) {
             weight = QuestionWeight.EASY;
-        } else if (mCnt < Constants.MEDIUM_QUESTION_CNT) {
+        } else if (mCnt < propertiesService.getAsInteger(Properties.MEDIUM_QUESTION_CNT)) {
             weight = QuestionWeight.MEDIUM;
-        } else if (dCnt < Constants.DAY_QUESTION_CNT) {
+        } else if (dCnt < propertiesService.getAsInteger(Properties.DAY_QUESTION_CNT)) {
             weight = QuestionWeight.DIFFICULT;
         }
         return weight;
     }
 
-    private void refreshQuestions() {
+    public void refreshQuestions() {
         try {
             synchronized (lockObj) {
                 int sysCurrentDay = propertiesService.getAsInteger(Properties.CURRENT_DAY);
@@ -105,8 +104,20 @@ public class QuestionService {
         }
     }
 
+    public void refreshQuestions(Integer currentDay) {
+        try {
+            synchronized (lockObj) {
+                this.questions = questionDao.findQuestionByUseDay(currentDay);
+                LOGGER.info("Обновили список вопросов для текущего дня {}", currentDay);
+            }
+        } catch (Exception e) {
+            LOGGER.info("Ошибка обновления список вопросов для текущего дня.", e);
+        }
+    }
+
     @PostConstruct
     private void startScheduler() {
+        refreshQuestions();
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         executor.scheduleAtFixedRate(this::refreshQuestions, 1, this.questionRefreshTime, TimeUnit.SECONDS);
     }

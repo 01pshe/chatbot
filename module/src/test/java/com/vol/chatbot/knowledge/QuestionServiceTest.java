@@ -1,5 +1,6 @@
 package com.vol.chatbot.knowledge;
 
+import com.vol.chatbot.model.Properties;
 import com.vol.chatbot.services.Constants;
 import com.vol.chatbot.services.QuestionService;
 import org.junit.Test;
@@ -10,8 +11,12 @@ public class QuestionServiceTest {
 
     @Test
     public void countQuestion() {
-        assertEquals(Constants.DAY_QUESTION_CNT,
-            (Constants.DIFFICULT_QUESTION_CNT + Constants.EASY_QUESTION_CNT + Constants.MEDIUM_QUESTION_CNT));
+        Integer expected = Integer.valueOf(Properties.DAY_QUESTION_CNT.getDefaultVal());
+        Integer actual = Integer.valueOf(Properties.DIFFICULT_QUESTION_CNT.getDefaultVal()) +
+            Integer.valueOf(Properties.EASY_QUESTION_CNT.getDefaultVal()) +
+            Integer.valueOf(Properties.MEDIUM_QUESTION_CNT.getDefaultVal());
+
+        assertEquals(expected,actual);
     }
 
 }

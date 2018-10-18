@@ -2,44 +2,65 @@ package com.vol.chatbot.services.propertiesservice;
 
 import com.vol.chatbot.dao.PropertiesDao;
 import com.vol.chatbot.model.Properties;
+import com.vol.chatbot.model.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
-@Service
-@Deprecated
-public class PropertiesServiceImpl implements PropertiesService, AutoCloseable {
+public class PropertiesServiceSheduled implements PropertiesService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesServiceSheduled.class);
 
     private Map<Properties, String> properties = new ConcurrentHashMap<>();
+    private final Object lockObj = new Object();
 
-    private Thread refresherThread;
 
     private PropertiesDao propertiesDao;
+    private long propertiesRefreshTime;
+
 
     @Autowired
-    public PropertiesServiceImpl(PropertiesDao propertiesDao) {
+    public PropertiesServiceSheduled(PropertiesDao propertiesDao) {
         this.propertiesDao = propertiesDao;
+        this.propertiesRefreshTime = this.getAsInteger(Properties.REFRESH_PROPERTIES_TIME);
     }
 
+    @PostConstruct
+    private void startScheduler() {
+        refreshProperties();
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        executor.scheduleAtFixedRate(this::refreshProperties, 1, this.propertiesRefreshTime, TimeUnit.SECONDS);
+    }
 
     @Override
-    public void close() throws Exception {
-        refresherThread.interrupt();
+    public void refreshProperties() {
+        try {
+            synchronized (lockObj) {
+                List<Property> actualProperties = propertiesDao.findAll();
+                Map<Properties, String> actualMap = new EnumMap<>(Properties.class);
+                for (Property prop : actualProperties) {
+                    actualMap.put(prop.getPropertyName(), prop.getPropertyValue());
+                }
+                properties.putAll(actualMap);
+                LOGGER.info("Обновили список настроек.");
+            }
+        } catch (Exception e) {
+            LOGGER.info("Ошибка обновления списока настроек.", e);
+        }
     }
 
-    public void setTps(double tps) {
-        PropertiesRefresher refresher = new PropertiesRefresher(propertiesDao, properties);
-        refresher.setTps(tps);
-        refresherThread = new Thread(refresher);
-        refresherThread.start();
-    }
+
+
 
     @Override
     public Boolean getAsBoolean(Properties propertyName) {
@@ -74,10 +95,4 @@ public class PropertiesServiceImpl implements PropertiesService, AutoCloseable {
             .map(Float::valueOf)
             .orElse(Float.valueOf(propertyName.getDefaultVal()));
     }
-
-    @Override
-    public void refreshProperties() {
-        LOGGER.warn("Эта реализация не умеет принудительно обновлять настройки :(");
-    }
-
 }

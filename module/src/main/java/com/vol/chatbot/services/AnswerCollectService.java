@@ -69,10 +69,11 @@ public class AnswerCollectService implements BotService {
             }
 
             // польльзователь ответил на все вопросов, отправим сообщение что спсибо за участие и завершим день
-            if (answerHelper.isEndCurrentDayTest()) {
+            if (answerHelper.getPassedQuestions().size() >= propertiesService.getAsInteger(Properties.DAY_QUESTION_CNT)) {
+
                 UserResult currentResult = answerHelper.getUserResultByCurrentDay();
 
-                userService.updateUserResultByCurrentDay(user, currentResult.getPercentage());
+                userService.updateUserResultByCurrentDay(user, currentResult.getPercentage(propertiesService));
 
                 sendMessage = new SendMessage();
                 sendMessage.setText(currentResult.getResultMessageByCurrentDay(propertiesService));

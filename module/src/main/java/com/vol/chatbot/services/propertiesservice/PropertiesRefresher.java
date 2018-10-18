@@ -20,6 +20,7 @@ public class PropertiesRefresher implements Runnable {
     public PropertiesRefresher(PropertiesDao propertiesDao, Map<Properties, String> currentProperties) {
         this.propertiesDao = propertiesDao;
         this.currentProperties = currentProperties;
+
     }
 
     public void setTps(double tps) {

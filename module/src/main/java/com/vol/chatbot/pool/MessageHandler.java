@@ -53,15 +53,18 @@ public class MessageHandler extends RecursiveAction {
         try {
             SendMessage sendMessage;
             if (!propertiesService.getAsBoolean(Properties.SUSPEND_MODE)) {
-                User user = userService.getUser(update,getChadId(update));
+                User user = userService.getUser(update, getChadId(update));
                 if (isCommand(update)) {
                     sendMessage = commandProcessor.createResponse(user, update);
                 } else {
                     sendMessage = answerCollectService.createResponse(user, update);
                 }
-            } else {
+            } else if (propertiesService.getAsInteger(Properties.CURRENT_DAY) == 1) {
                 sendMessage = new SendMessage();
                 sendMessage.setText(propertiesService.getAsString(Properties.SUSPEND_TEXT));
+            } else {
+                sendMessage = new SendMessage();
+                sendMessage.setText(propertiesService.getAsString(Properties.SUSPEND_TEXT_END));
             }
 
             if (sendMessage != null) {
