@@ -83,11 +83,11 @@ public class QuestionService {
 
     private QuestionWeight getWeightCurrent(int dCnt, int mCnt, int eCnt) {
         QuestionWeight weight = null;
-        if (eCnt < Constants.EASY_QUESTION_CNT) {
+        if (eCnt < propertiesService.getAsInteger(Properties.EASY_QUESTION_CNT)) {
             weight = QuestionWeight.EASY;
-        } else if (mCnt < Constants.MEDIUM_QUESTION_CNT) {
+        } else if (mCnt < propertiesService.getAsInteger(Properties.MEDIUM_QUESTION_CNT)) {
             weight = QuestionWeight.MEDIUM;
-        } else if (dCnt < Constants.DAY_QUESTION_CNT) {
+        } else if (dCnt < propertiesService.getAsInteger(Properties.DAY_QUESTION_CNT)) {
             weight = QuestionWeight.DIFFICULT;
         }
         return weight;

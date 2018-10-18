@@ -1,6 +1,7 @@
 package com.vol.chatbot.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "bot_messages")
@@ -15,11 +16,13 @@ public class Message {
     @JoinColumn(name = "user_id")
     private User user;
 
-    //new Date(TimeUnit.MILLISECONDS.convert(1536070445L,TimeUnit.SECONDS))
-    @Column(name = "date", nullable = false)
-    private Long date;
+    @Column(name = "nameUser")
+    private String nameUser;
 
-    @Column(name = "message", nullable = false)
+    @Column(name = "date", nullable = false)
+    private Date date;
+
+    @Column(name = "message", nullable = false, length = 4096)
     private String messageText;
 
     @Column(name = "inbound")
@@ -45,11 +48,11 @@ public class Message {
         this.user = user;
     }
 
-    public Long getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(Long date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -67,6 +70,14 @@ public class Message {
 
     public void setInbound(Boolean inbound) {
         this.inbound = inbound;
+    }
+
+    public String getNameUser() {
+        return nameUser;
+    }
+
+    public void setNameUser(String nameUser) {
+        this.nameUser = nameUser;
     }
 
     @Override
