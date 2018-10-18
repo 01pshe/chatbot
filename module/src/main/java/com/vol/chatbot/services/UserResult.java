@@ -2,10 +2,12 @@ package com.vol.chatbot.services;
 
 import com.vol.chatbot.model.Properties;
 import com.vol.chatbot.model.QuestionWeight;
+import com.vol.chatbot.model.User;
 import com.vol.chatbot.services.propertiesservice.PropertiesService;
 
 public class UserResult {
-    private String userName;
+
+    private User currentUser;
     private int difficultAnswer;
     private int mediumAnswer;
     private int easyAnswer;
@@ -17,8 +19,8 @@ public class UserResult {
     private int points;
     private Float pct;
 
-    public UserResult(String userName) {
-        this.userName = userName;
+    public UserResult(User user) {
+        this.currentUser = user;
     }
 
     public void incAnswer(QuestionWeight weight, Boolean isCorrect) {
@@ -74,8 +76,12 @@ public class UserResult {
             prop = Properties.BAD_RESULT;
             total = prop.getDefaultVal();
         } else {
-            total = "Жизнь прекрасна, не печальтесь!";
+            return "Жизнь прекрасна, не печальтесь!";
         }
-        return String.format(total, this.userName, currentPCT);
+        String dayTo = "";
+        if (propertiesService.getAsInteger(Properties.CURRENT_DAY) == 2) {
+             dayTo = String.format("*Сумарный результат за оба дня %.2f*", currentUser.getTotalResult());
+        }
+        return String.format(total, this.currentUser.getUserFirstName(), currentPCT, dayTo);
     }
 }
