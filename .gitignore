@@ -2,3 +2,4 @@
 /**/*.iml
 /module/src/main/resources/private.properties
 /.idea/
+/model/src/main/resources/sql/7. allQuestions.sql
