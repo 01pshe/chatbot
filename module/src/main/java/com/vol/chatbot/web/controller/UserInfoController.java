@@ -26,19 +26,20 @@ public class UserInfoController {
 
     @RequestMapping({"/","/users"})
     public String listAll(Model model) {
-        LOGGER.debug("redirect to user.jsp");
+        LOGGER.debug("redirect to user.html");
         model.addAttribute("users", userService.getAll());
         return "users";
     }
 
     @RequestMapping("/messages")
     public String messages() {
+        LOGGER.info("Redirect to message.html");
         return "messages";
     }
 
     @PostMapping("/messages")
     public String sendMessage(@RequestParam String text) {
-        System.out.println(text);
+        LOGGER.info("Send message to All users", text);
         messageSender.sendAll(text);
         return "messages";
     }

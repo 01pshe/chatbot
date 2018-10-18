@@ -26,37 +26,25 @@
 </nav>
 
 <div class="container">
-    <div class="page-header">
-        <h1>Список участников</h1>
-    </div>
+    <h1>Управление ботом</h1>
+    <p th:text="'В данный момент: ' + ${message} + '!'" />
+    <form action="/controls" method="post">
+        <div class="form-group">
+            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                <div class="btn-group" role="group">
+                    <input type="submit" class="btn btn-default btn-danger" name="action" value="stop"/>
+                </div>
+                <div class="btn-group" role="group">
+                    <input type="submit" class="btn btn-default btn-success" name="action" value="start"/>
+                </div>
+                <div class="btn-group" role="group">
+                    <input type="submit" class="btn btn-default btn-info" name="action" value="openSecondDay"/>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
-<div class="container">
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered">
-            <tr>
-                <th>ChatId</th>
-                <th>FirstName</th>
-                <th>LastName</th>
-                <th>UserName</th>
-                <th>OneDay</th>
-                <th>TwoDay</th>
-                <th>TotalREsult</th>
-            </tr>
-            <th:block th:each="user : ${users}">
-                <tr>
-                    <td th:text="${user.chatId}"></td>
-                    <td th:text="${user.userFirstName}"></td>
-                    <td th:text="${user.userLastName}"></td>
-                    <td th:text="${user.userName}"></td>
-                    <td th:text="${user.dayOneResult}"></td>
-                    <td th:text="${user.dayTwoResult}"></td>
-                    <td th:text="${user.totalResult}"></td>
-                </tr>
-            </th:block>
-        </table>
-    </div>
-</div>
 <!--<div th:replace="include/footer :: footer">&copy; 2016 The Static Templates</div>-->
 </body>
 </html>
