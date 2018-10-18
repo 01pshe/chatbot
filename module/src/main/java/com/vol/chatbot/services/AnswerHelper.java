@@ -7,7 +7,6 @@ import com.vol.chatbot.model.Question;
 import com.vol.chatbot.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -15,7 +14,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.LockModeType;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,13 +27,12 @@ public class AnswerHelper implements AutoCloseable {
     private int sysCurrentDay;
 
     private EntityManager entityManager;
-    private EntityManagerFactory emf;
 
     // Вопросы которые уже задовали
     private List<Question> passedQuestions;
 
     // Вопросы которые ждут ответа
-    private List<Answer> expectedAnswers = new ArrayList<>();
+    private List<Answer> expectedAnswers;
 
     // пришел ожидаемый вопрос
     private boolean isExpectedAnswer = false;
@@ -44,8 +41,7 @@ public class AnswerHelper implements AutoCloseable {
     public AnswerHelper(User user, int sysCurrentDay, Update update, EntityManagerFactory entityManagerFactory) {
         this.user = user;
         this.sysCurrentDay = sysCurrentDay;
-        this.emf = entityManagerFactory;
-        this.entityManager = this.emf.createEntityManager();
+        this.entityManager = entityManagerFactory.createEntityManager();
 
         passedQuestions = this.entityManager.createNativeQuery("select q.* from bot_question q, bot_answer a where a.question_id = q.id and a.user_id = :userId and a.day_answer = :dayAnswer", Question.class)
             .setParameter("userId", this.user.getId())
@@ -73,7 +69,7 @@ public class AnswerHelper implements AutoCloseable {
     }
 
     public UserResult getUserResultByCurrentDay() {
-        UserResult currentResult = new UserResult(this.user.getUserFirstName());
+        UserResult currentResult = new UserResult(this.user);
 
         List<Answer> answerList = this.entityManager.createNativeQuery("select a.* from bot_answer a where a.user_id = :userId and a.day_answer = :dayAnswer and a.question_id is not null", Answer.class)
             .setParameter("userId", this.user.getId())
@@ -107,11 +103,10 @@ public class AnswerHelper implements AutoCloseable {
     }
 
 
-    public void initMessage(Update update) {
+    private void initMessage(Update update) {
         isCallback = Boolean.FALSE;
 
-        EntityManager em = this.emf.createEntityManager();
-        EntityTransaction transaction = em.getTransaction();
+        EntityTransaction transaction = this.entityManager.getTransaction();
         try {
             transaction.begin();
             Message message = new Message();
@@ -120,13 +115,11 @@ public class AnswerHelper implements AutoCloseable {
             message.setMessageText(update.getMessage().getText());
             message.setUser(this.user);
             message.setNameUser(this.user.getUserFirstName());
-            em.persist(message);
-            em.flush();
+            this.entityManager.persist(message);
+            this.entityManager.flush();
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
-        } finally {
-            em.close();
         }
     }
 
@@ -216,5 +209,29 @@ public class AnswerHelper implements AutoCloseable {
             this.entityManager.close();
         }
 
+    }
+
+    public boolean startSecond() {
+        boolean start = false;
+        EntityTransaction transaction = entityManager.getTransaction();
+
+        try {
+            transaction.begin();
+
+            User userLock = this.entityManager.find(User.class, this.user.getId(), LockModeType.PESSIMISTIC_WRITE);
+
+            if (userLock.isStartFirst() && !userLock.isStartSecond()) {
+                userLock.setStartSecond(true);
+                entityManager.merge(userLock);
+                entityManager.flush();
+                start = true;
+            }
+            transaction.commit();
+        } catch (Exception e) {
+            transaction.rollback();
+            start = false;
+        }
+
+        return start;
     }
 }

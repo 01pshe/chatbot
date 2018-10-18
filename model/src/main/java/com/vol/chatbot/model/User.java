@@ -49,6 +49,9 @@ public class User {
     @Column(name = "start_first")
     private boolean startFirst;
 
+    @Column(name = "start_second")
+    private boolean startSecond;
+
     public User() {
         // Do nothing
     }
@@ -155,6 +158,14 @@ public class User {
 
     public void setStartFirst(boolean startFirst) {
         this.startFirst = startFirst;
+    }
+
+    public boolean isStartSecond() {
+        return startSecond;
+    }
+
+    public void setStartSecond(boolean startSecond) {
+        this.startSecond = startSecond;
     }
 
     @Override

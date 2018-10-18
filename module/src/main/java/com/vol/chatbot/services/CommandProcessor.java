@@ -98,8 +98,9 @@ public class CommandProcessor implements BotService {
                 try (AnswerHelper ah = new AnswerHelper(user, propertiesService.getAsInteger(Properties.CURRENT_DAY), update, entityManagerFactory)) {
 
 
-                    if (ah.startFirst()) {
-//                    if (ah.getPassedQuestions().isEmpty()) {
+                    if (ah.startFirst() || ah.startSecond() ) {
+
+
                         SendMessage message = new SendMessage();
                         message.enableMarkdown(true);
                         message.setChatId(update.getMessage().getChatId());
