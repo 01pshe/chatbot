@@ -4,4 +4,7 @@ function updateEventCount() {
     });
 }
 
-$(document).ready(setInterval(updateEventCount, 3000));
+$(document).ready(function(){
+    updateEventCount();
+    setInterval(updateEventCount, 3000);
+});

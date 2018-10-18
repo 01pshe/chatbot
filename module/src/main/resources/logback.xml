@@ -8,7 +8,7 @@
         </layout>
     </appender>
 
-    <logger name="com.vol.chatbot" level="trace" additivity="false">
+    <logger name="com.vol.chatbot" level="info" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
 

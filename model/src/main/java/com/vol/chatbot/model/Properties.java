@@ -8,6 +8,7 @@ public enum Properties {
     SUSPEND_MODE("false"),
     CURRENT_DAY("1"),
     REFRESH_QUESTION_TIME("60"),
+    REFRESH_PROPERTIES_TIME("60"),
     RESULT_EXCELLENT_PCT("80"),
     RESULT_GOOD_PCT("50"),
     RESULT_BAD_PCT("0"),
@@ -50,7 +51,12 @@ public enum Properties {
         "Тест проводится два дня, каждый день новые вопросы и возможность получить приз. \n" +
         "Набери максимум баллов и ты сможешь участвовать в финальном розыгрыше главного приза. \n"+
         "Будь лучшим, удачи.\uD83C\uDF81 \n"
-    );
+    ),
+    NEW_DAY_MESSAGE("*Доброе утро!* \uD83C\uDF1E\n" +
+        "Надеюсь у тебя еще остались силы?\n" +
+        "Пройди второй этап тестирования и получи еще больше подарков!\n" +
+        "Новые вопросы ждут тебя!\n" +
+        "Для начала теста выполни команду ```/start```");
 
 
     private String defaultVal;
