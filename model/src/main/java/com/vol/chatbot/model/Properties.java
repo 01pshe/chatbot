@@ -12,7 +12,10 @@ public enum Properties {
     RESULT_GOOD_PCT("50"),
     RESULT_BAD_PCT("0"),
     MESSAGE_HANDLER_COUNT("16"),
-
+    DAY_QUESTION_CNT("20"),
+    DIFFICULT_QUESTION_CNT("5"),
+    MEDIUM_QUESTION_CNT("7"),
+    EASY_QUESTION_CNT("8"),
     EXCELLENT_RESULT("Молодец *%s* \uD83C\uDF89\uD83C\uDF89\uD83C\uDF89\n" +
         "\n" +
         " ✅ Твой результат - %.2f процентов!\n" +
@@ -38,6 +41,9 @@ public enum Properties {
     SUSPEND_TEXT("На сегодня тестирование окончено, \n" +
         "пора сделать перерыв ✨\uD83D\uDE34\uD83C\uDF19 \n"+
         " Завтра появятся новые вопросы! "),
+
+    SUSPEND_TEXT_END("Тестирование окончено, \n" +
+        "спасибо за участие! "),
 
     WELCOME_TEXT("Привет, *%s*! \uD83D\uDC4B \n" +
         "Здорово, что ты решился пройти тест на знание *Java*. \uD83D\uDCDD \n"+

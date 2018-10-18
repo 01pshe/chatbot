@@ -16,9 +16,10 @@ create table bot_answer (
 
 create table bot_messages (
   id int8 not null,
-  date int8 not null,
+  date timestamp not null,
   inbound boolean,
-  message varchar(255) not null,
+  message varchar(4096) not null,
+  nameUser varchar(255),
   user_id int8,
   primary key (id)
 );
