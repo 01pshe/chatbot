@@ -96,11 +96,7 @@ public class CommandProcessor implements BotService {
                 break;
             case START:
                 try (AnswerHelper ah = new AnswerHelper(user, propertiesService.getAsInteger(Properties.CURRENT_DAY), update, entityManagerFactory)) {
-
-
-                    if (ah.startFirst() || ah.startSecond() ) {
-
-
+                    if (propertiesService.getAsInteger(Properties.CURRENT_DAY) == 1 && ah.startFirst()) {
                         SendMessage message = new SendMessage();
                         message.enableMarkdown(true);
                         message.setChatId(update.getMessage().getChatId());
@@ -109,6 +105,8 @@ public class CommandProcessor implements BotService {
                             user.getUserFirstName());
                         message.setText(preparedText);
                         queueService.add(message);
+                        answer = answerCollectService.createResponse(user, update);
+                    } else if (propertiesService.getAsInteger(Properties.CURRENT_DAY) == 2 && ah.startSecond()) {
                         answer = answerCollectService.createResponse(user, update);
                     } else if (ah.getExpectedAnswers().size() == 1) {
                         answer = ah.getQuestionLastMessage();
