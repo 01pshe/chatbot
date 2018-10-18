@@ -14,4 +14,6 @@ public interface PropertiesService {
 
     Float getAsFloat(Properties propertyName);
 
+    void refreshProperties();
+
 }
