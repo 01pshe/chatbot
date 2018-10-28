@@ -115,6 +115,21 @@ public class CommandProcessor implements BotService {
                     }
                 }
                 break;
+            case SET_FIO:
+                try (AnswerHelper ah = new AnswerHelper(user, propertiesService.getAsInteger(Properties.CURRENT_DAY), update, entityManagerFactory)) {
+                    answer.setText("Спасибо! Ваши ФИО сохранены.");
+                }
+                break;
+            case SET_PHONE:
+                try (AnswerHelper ah = new AnswerHelper(user, propertiesService.getAsInteger(Properties.CURRENT_DAY), update, entityManagerFactory)) {
+                    answer.setText("Спасибо! Ваш телефон сохранен.");
+                }
+                break;
+            case SET_EMAIL:
+                try (AnswerHelper ah = new AnswerHelper(user, propertiesService.getAsInteger(Properties.CURRENT_DAY), update, entityManagerFactory)) {
+                    answer.setText("Спасибо! Ваш E-mail сохранен.");
+                }
+                break;
             default:
                 answer.setText("Команда не поддерживается.");
                 break;
@@ -127,6 +142,9 @@ public class CommandProcessor implements BotService {
         SEND_MESSAGE_TO_ALL,
         SEND_MESSAGE_BY_NAMES,
         PROPERTY,
+        SET_FIO,
+        SET_PHONE,
+        SET_EMAIL,
         UNSUPPORTED
     }
 }
